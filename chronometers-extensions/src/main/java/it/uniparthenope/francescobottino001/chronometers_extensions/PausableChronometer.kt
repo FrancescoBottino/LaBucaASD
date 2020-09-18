@@ -20,7 +20,7 @@ open class PausableChronometer @JvmOverloads constructor(
     override fun start() {
         if(currentState != State.IDLE && currentState != State.EMPTY) return
 
-        base = SystemClock.elapsedRealtime() + totalElapsedSeconds
+        base = SystemClock.elapsedRealtime() + (totalElapsedSeconds * 1000L)
         super.start()
 
         currentState = State.RUNNING
@@ -30,7 +30,7 @@ open class PausableChronometer @JvmOverloads constructor(
     fun resume() {
         if(currentState != State.PAUSED) return
 
-        base = SystemClock.elapsedRealtime() + totalElapsedSeconds
+        base = SystemClock.elapsedRealtime() + (totalElapsedSeconds * 1000L)
         super.start()
 
         currentState = State.RUNNING
@@ -40,7 +40,7 @@ open class PausableChronometer @JvmOverloads constructor(
     override fun stop() {
         if(currentState != State.RUNNING && currentState != State.PAUSED) return
 
-        totalElapsedSeconds = base - SystemClock.elapsedRealtime()
+        totalElapsedSeconds = (base - SystemClock.elapsedRealtime()) / 1000L
         super.stop()
 
         currentState = State.IDLE
@@ -50,7 +50,7 @@ open class PausableChronometer @JvmOverloads constructor(
     fun pause() {
         if(currentState != State.RUNNING) return
 
-        totalElapsedSeconds = base - SystemClock.elapsedRealtime()
+        totalElapsedSeconds = (base - SystemClock.elapsedRealtime()) / 1000L
         super.stop()
 
         currentState = State.PAUSED
@@ -98,7 +98,7 @@ open class PausableChronometer @JvmOverloads constructor(
             }
             State.RUNNING -> {
                 totalElapsedSeconds = seconds
-                base = SystemClock.elapsedRealtime() + totalElapsedSeconds
+                base = SystemClock.elapsedRealtime() - (totalElapsedSeconds * 1000L)
 
                 super.start()
 

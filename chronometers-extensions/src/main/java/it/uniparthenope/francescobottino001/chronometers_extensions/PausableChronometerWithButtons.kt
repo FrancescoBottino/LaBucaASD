@@ -252,4 +252,6 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     fun setTimerTickListener(listener: PausableChronometer.OnPausableChronometerTickListener?) {
         timer.setOnPausableChronometerTickListener(listener)
     }
+
+    fun setChronometerState(state: PausableChronometer.State, seconds: Long = 0L) = timer.setChronometerState(state, seconds)
 }
