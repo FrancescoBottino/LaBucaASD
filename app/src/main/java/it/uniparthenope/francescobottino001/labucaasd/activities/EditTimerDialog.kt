@@ -7,9 +7,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import it.uniparthenope.francescobottino001.labucaasd.R
+import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
+import kotlinx.android.synthetic.main.timers_list_item.*
 import java.lang.Exception
 
-class NewTimerDialog(ctx: Context, callback: (String, Double)->Unit): AlertDialog(ctx) {
+class EditTimerDialog(ctx: Context, timerData: TimerData, callback: (String, Double)->Unit): AlertDialog(ctx) {
 
     private val root = LayoutInflater.from(ctx).inflate(R.layout.timer_form_dialog, null, true)
 
@@ -22,10 +24,13 @@ class NewTimerDialog(ctx: Context, callback: (String, Double)->Unit): AlertDialo
     init {
         setView(root)
 
-        title.text = this.context.resources.getString(R.string.new_timer_dialog_title)
+        title.text = this.context.resources.getString(R.string.edit_timer_dialog_title)
 
         positiveButton.text = this.context.resources.getString(R.string.new_timer_dialog_positive_button)
         negativeButton.text = this.context.resources.getString(R.string.timer_dialog_negative_button)
+
+        nameField.setText(timerData.name)
+        hourlyCostField.setText(timerData.hourlyCost.toString())
 
         positiveButton.setOnClickListener {
             val name = nameField.text.toString()
