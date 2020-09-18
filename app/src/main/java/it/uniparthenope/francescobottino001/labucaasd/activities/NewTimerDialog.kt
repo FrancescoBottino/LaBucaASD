@@ -8,12 +8,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import it.uniparthenope.francescobottino001.labucaasd.R
-import kotlinx.android.synthetic.main.new_timer_dialog.*
+import kotlinx.android.synthetic.main.timer_form_dialog.*
 import java.lang.Exception
 
 class NewTimerDialog(ctx: Context, callback: (String, Double)->Unit): AlertDialog(ctx) {
 
-    private val root = LayoutInflater.from(ctx).inflate(R.layout.new_timer_dialog, null, true)
+    private val root = LayoutInflater.from(ctx).inflate(R.layout.timer_form_dialog, null, true)
 
     private val title: TextView = root.findViewById(R.id.alert_title)
     private val nameField: EditText = root.findViewById(R.id.name_field)
