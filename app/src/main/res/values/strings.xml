@@ -2,4 +2,9 @@
     <string name="app_name">La Buca ASD</string>
     <string name="hourly_cost_label">%.2f €/H</string>
     <string name="total_cost_label">%.2f €</string>
+    <string name="new_timer_dialog_title">Aggiungi timer</string>
+    <string name="new_timer_dialog_positive_button">aggiungi</string>
+    <string name="new_timer_dialog_negative_button">annulla</string>
+    <string name="new_timer_dialog_empty_name_error">Il nome timer deve essere lungo almeno 3 caratteri</string>
+    <string name="new_timer_dialog_wrong_cost_error">Inserisci un costo corretto</string>
 </resources>

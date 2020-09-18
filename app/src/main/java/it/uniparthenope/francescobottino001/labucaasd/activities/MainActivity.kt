@@ -45,20 +45,14 @@ class MainActivity : BasicActivity() {
         //TODO DRAG TO REORDER
 
         fab.setOnClickListener {
-            //TODO DIALOG NEW TIMER
-            //newTimerDialog()
+            NewTimerDialog(this) { name, hourlyCost ->
+                val ordinal = timersList.size + 1
+                val newTimer = TimerData(name, hourlyCost, ordinal.toLong())
+
+                timersList.add(newTimer)
+                adapter.itemAdapter.add(TimerBinder(newTimer))
+                viewModel.addTimer(newTimer)
+            }.show()
         }
     }
-
-    /*
-    fun newTimer() {
-        val ordinal = timersList.size + 1
-        val newTimer = TimerData("PlayStation", 20.0, ordinal.toLong())
-        timersList.add(newTimer)
-
-        adapter.itemAdapter.add(TimerBinder(newTimer))
-
-        viewModel.addTimer(newTimer)
-    }
-     */
 }
