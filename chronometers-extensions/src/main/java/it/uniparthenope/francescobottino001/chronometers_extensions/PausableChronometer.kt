@@ -17,41 +17,51 @@ open class PausableChronometer @JvmOverloads constructor(
     var totalElapsedSeconds: Long = 0L
         private set
 
-    final override fun start() {
-        if(currentState == State.IDLE) {
-            base = SystemClock.elapsedRealtime()
-            currentState = State.RUNNING
-            super.start()
-            stateListener?.onStateRunning()
-        }
+    override fun start() {
+        if(currentState != State.IDLE) return
+
+        base = SystemClock.elapsedRealtime() + totalElapsedSeconds
+        super.start()
+
+        currentState = State.RUNNING
+        stateListener?.onStateRunning()
     }
 
-    final fun resume() {
-        if(currentState == State.PAUSED) {
-            base = SystemClock.elapsedRealtime() + totalElapsedSeconds
-            currentState = State.RUNNING
-            super.start()
-            stateListener?.onStateRunning()
-        }
+    fun resume() {
+        if(currentState != State.PAUSED) return
+
+        base = SystemClock.elapsedRealtime() + totalElapsedSeconds
+        super.start()
+
+        currentState = State.RUNNING
+        stateListener?.onStateRunning()
     }
 
-    final override fun stop() {
-        if(currentState == State.RUNNING || currentState == State.PAUSED) {
-            totalElapsedSeconds = base - SystemClock.elapsedRealtime();
-            currentState = State.IDLE
-            super.stop()
-            resetText()
-            stateListener?.onStateIdle()
-        }
+    override fun stop() {
+        if(currentState != State.RUNNING && currentState != State.PAUSED) return
+
+        totalElapsedSeconds = base - SystemClock.elapsedRealtime()
+        super.stop()
+
+        currentState = State.IDLE
+        stateListener?.onStateIdle()
     }
 
-    final fun pause() {
-        if(currentState == State.RUNNING) {
-            totalElapsedSeconds = base - SystemClock.elapsedRealtime();
-            currentState = State.PAUSED
-            super.stop()
-            stateListener?.onStatePaused()
-        }
+    fun pause() {
+        if(currentState != State.RUNNING) return
+
+        totalElapsedSeconds = base - SystemClock.elapsedRealtime()
+        super.stop()
+
+        currentState = State.PAUSED
+        stateListener?.onStatePaused()
+    }
+
+    fun clear() {
+        if(currentState != State.IDLE) return
+
+        totalElapsedSeconds = 0L
+        resetText()
     }
 
     interface StateListener {
