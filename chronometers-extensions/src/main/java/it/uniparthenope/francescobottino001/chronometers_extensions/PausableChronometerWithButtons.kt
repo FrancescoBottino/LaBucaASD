@@ -37,6 +37,7 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     private val playIconDrawable = R.drawable.ic_round_play_arrow_24
     private val pauseIconDrawable = R.drawable.ic_round_pause_24
     private val stopIconDrawable = R.drawable.ic_round_stop_24
+    private val clearIconDrawable = R.drawable.ic_round_clear_24
 
     //Custom attributes
     init {
@@ -169,17 +170,29 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     private val stopAction = OnClickListener{ timer.stop() }
     private val pauseAction = OnClickListener{ timer.pause() }
     private val resumeAction = OnClickListener{ timer.resume() }
+    private val clearAction = OnClickListener{ timer.clear() }
 
+    private fun setStateEmpty() {
+        playButton.setImageDrawable(ContextCompat.getDrawable(context, playIconDrawable))
+        playButton.setColorFilter(playButtonColorEnabled)
+        playButton.isClickable = true
+        playButtonInternalClickListener = resumeAction
+
+        stopButton.setImageDrawable(ContextCompat.getDrawable(context, stopIconDrawable))
+        stopButton.setColorFilter(stopButtonColorDisabled)
+        stopButton.isClickable = false
+        stopButtonInternalClickListener = null
+    }
     private fun setStateIdle() {
         playButton.setImageDrawable(ContextCompat.getDrawable(context, playIconDrawable))
         playButton.setColorFilter(playButtonColorEnabled)
         playButton.isClickable = true
         playButtonInternalClickListener = startAction
 
-        stopButton.setImageDrawable(ContextCompat.getDrawable(context, stopIconDrawable))
-        stopButton.setColorFilter(stopButtonColorDisabled)
-        stopButton.isClickable = false
-        stopButtonInternalClickListener = null
+        stopButton.setImageDrawable(ContextCompat.getDrawable(context, clearIconDrawable))
+        stopButton.setColorFilter(stopButtonColorEnabled)
+        stopButton.isClickable = true
+        stopButtonInternalClickListener = clearAction
     }
     private fun setStateRunning() {
         playButton.setImageDrawable(ContextCompat.getDrawable(context, pauseIconDrawable))
@@ -220,6 +233,11 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
         override fun onStatePaused() {
             setStatePaused()
             stateListener?.onStatePaused()
+        }
+
+        override fun onStateEmpty() {
+            setStateEmpty()
+            stateListener?.onStateEmpty()
         }
     }
 
