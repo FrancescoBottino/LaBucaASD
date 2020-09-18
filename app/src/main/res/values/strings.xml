@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">La Buca ASD</string>
+    <string name="hourly_cost_label">%.2f €/H</string>
+    <string name="total_cost_label">%.2f €</string>
 </resources>

@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 @Database(entities = [TimerData::class], version = 1)
 @TypeConverters(CalendarConverters::class, StateConverters::class)
 abstract class TimersDatabase : RoomDatabase() {
-    abstract fun timerDao(): TimerDAO
+    abstract fun timerDao(): TimersDAO
 
     companion object {
         // Singleton prevents multiple instances of database opening at the
