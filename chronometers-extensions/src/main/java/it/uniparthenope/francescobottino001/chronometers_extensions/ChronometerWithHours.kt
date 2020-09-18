@@ -14,7 +14,8 @@ open class ChronometerWithHours @JvmOverloads constructor(
     }
 
     private val internalTickListener = OnChronometerTickListener { chronometer ->
-        setText((SystemClock.elapsedRealtime() - chronometer.base)/1000L)
+        val totalElapsedSeconds = (SystemClock.elapsedRealtime() - base)/1000L
+        setText(totalElapsedSeconds)
     }
 
     override fun setOnChronometerTickListener(newListener: OnChronometerTickListener?) {

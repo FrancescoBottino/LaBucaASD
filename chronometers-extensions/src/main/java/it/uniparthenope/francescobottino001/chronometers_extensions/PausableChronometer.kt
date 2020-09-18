@@ -12,18 +12,27 @@ open class PausableChronometer @JvmOverloads constructor(
         EMPTY, IDLE, RUNNING, PAUSED
     }
 
+    var totalElapsedSeconds: Long = 0L
+        internal set
+
+    internal fun setTimeAtSeconds(seconds: Long) {
+        base = SystemClock.elapsedRealtime() - (seconds * 1000L)
+    }
+
+    internal fun calculateTotalElapsedSeconds(): Long {
+        return (SystemClock.elapsedRealtime() - base)/1000L
+    }
+
     var currentState: State = State.EMPTY
         private set(value) {
             field = value
             onStateChangedListener?.onStateChanged(value)
         }
-    var totalElapsedSeconds: Long = 0L
-        private set
 
     override fun start() {
         if(currentState != State.IDLE && currentState != State.EMPTY) return
 
-        base = SystemClock.elapsedRealtime() + (totalElapsedSeconds * 1000L)
+        setTimeAtSeconds(totalElapsedSeconds)
         super.start()
 
         currentState = State.RUNNING
@@ -32,7 +41,7 @@ open class PausableChronometer @JvmOverloads constructor(
     fun resume() {
         if(currentState != State.PAUSED) return
 
-        base = SystemClock.elapsedRealtime() + (totalElapsedSeconds * 1000L)
+        setTimeAtSeconds(totalElapsedSeconds)
         super.start()
 
         currentState = State.RUNNING
@@ -41,7 +50,7 @@ open class PausableChronometer @JvmOverloads constructor(
     override fun stop() {
         if(currentState != State.RUNNING && currentState != State.PAUSED) return
 
-        totalElapsedSeconds = (SystemClock.elapsedRealtime() - base) / 1000L
+        totalElapsedSeconds = calculateTotalElapsedSeconds()
         super.stop()
 
         currentState = State.IDLE
@@ -50,7 +59,7 @@ open class PausableChronometer @JvmOverloads constructor(
     fun pause() {
         if(currentState != State.RUNNING) return
 
-        totalElapsedSeconds = (SystemClock.elapsedRealtime() - base) / 1000L
+        totalElapsedSeconds = calculateTotalElapsedSeconds()
         super.stop()
 
         currentState = State.PAUSED
@@ -94,7 +103,7 @@ open class PausableChronometer @JvmOverloads constructor(
     override fun setOnChronometerTickListener(newListener: OnChronometerTickListener?) {
         super.setOnChronometerTickListener {
             if( currentState == State.RUNNING ) {
-                totalElapsedSeconds++
+                totalElapsedSeconds = calculateTotalElapsedSeconds()
                 onPausableChronometerTickListener?.onTick(totalElapsedSeconds, currentState)
                 newListener?.onChronometerTick(it)
             }

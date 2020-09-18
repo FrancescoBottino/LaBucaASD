@@ -17,7 +17,7 @@ data class TimerData(
     @ColumnInfo(name = "hourly_cost")
     var hourlyCost: Double,
     @ColumnInfo(name = "ordinal")
-    var ordinal: Long,
+    var ordinal: Int,
     @ColumnInfo(name = "saved_at")
     var savedAt: Calendar? = null,
     @ColumnInfo(name = "elapsed_seconds")
@@ -26,5 +26,5 @@ data class TimerData(
     var state: PausableChronometer.State? = null,
 
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0L
+    var id: Int = 0
 )

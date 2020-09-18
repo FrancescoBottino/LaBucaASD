@@ -4,11 +4,11 @@ import androidx.room.*
 
 @Dao
 interface TimersDAO {
-    @Query("SELECT * FROM timer")
+    @Query("SELECT * FROM timer ORDER BY ordinal ASC")
     suspend fun getAll(): List<TimerData>
 
     @Query("SELECT * FROM timer WHERE id == :id")
-    suspend fun get(id: Long): TimerData
+    suspend fun get(id: Int): TimerData
 
     @Insert
     suspend fun insert(timerData: TimerData)

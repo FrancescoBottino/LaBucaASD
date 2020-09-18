@@ -86,7 +86,7 @@ class TimerBinder(
                 updateCostText(timer.timer.totalElapsedSeconds, item.timerData.hourlyCost)
             }
 
-            timer.setTimerTickListener { seconds, state ->
+            timer.setTimerTickListener { seconds, _ ->
                 updateCostText(seconds, item.timerData.hourlyCost)
             }
         }
