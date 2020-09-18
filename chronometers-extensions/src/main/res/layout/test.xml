@@ -6,7 +6,6 @@
     android:layout_height="match_parent">
 
     <it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometerWithButtons
-        android:id="@+id/pausableChronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardsCornerRadius="4dp"

@@ -28,7 +28,7 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     private val stopButtonCard: CardView = this.findViewById(R.id.stop_btn_card)
     private val stopButton: ImageButton = this.findViewById(R.id.stop_btn)
     private val timerCard: CardView = this.findViewById(R.id.timer_card)
-    private val timer: PausableChronometer = this.findViewById(R.id.timer)
+    private val timer: PausableChronometer = this.findViewById(R.id.pausable_chronometer_display)
 
     private val playButtonColorEnabled: Int
     private val playButtonColorDisabled: Int
@@ -246,7 +246,10 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     fun setTimerLongClickListener(listener: OnLongClickListener?) {
         timer.setOnLongClickListener(listener)
     }
-    fun setTimerTickListener(listener: Chronometer.OnChronometerTickListener?) {
-        timer.onChronometerTickListener = listener
+    fun setTimerTickListener(listener: ((Long, PausableChronometer.State)->Unit)?) {
+        timer.setOnPausableChronometerTickListener(listener)
+    }
+    fun setTimerTickListener(listener: PausableChronometer.OnPausableChronometerTickListener?) {
+        timer.setOnPausableChronometerTickListener(listener)
     }
 }

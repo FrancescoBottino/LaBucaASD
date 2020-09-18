@@ -107,4 +107,34 @@ open class PausableChronometer @JvmOverloads constructor(
             }
         }
     }
+
+    override fun setOnChronometerTickListener(newListener: OnChronometerTickListener?) {
+        super.setOnChronometerTickListener {
+            if( currentState == State.RUNNING ) {
+                totalElapsedSeconds++
+                onPausableChronometerTickListener?.onTick(totalElapsedSeconds, currentState)
+                newListener?.onChronometerTick(it)
+            }
+        }
+    }
+
+    interface OnPausableChronometerTickListener {
+        fun onTick(elapsedSeconds: Long, currentState: State)
+    }
+
+    private var onPausableChronometerTickListener: OnPausableChronometerTickListener? = null
+    fun setOnPausableChronometerTickListener(listener: ((Long, State)->Unit)?) {
+        listener?.let {
+            setOnPausableChronometerTickListener(
+                object: OnPausableChronometerTickListener {
+                    override fun onTick(elapsedSeconds: Long, currentState: State) {
+                        listener.invoke(elapsedSeconds, currentState)
+                    }
+                }
+            )
+        }
+    }
+    fun setOnPausableChronometerTickListener(listener: OnPausableChronometerTickListener?) {
+        onPausableChronometerTickListener = listener
+    }
 }
