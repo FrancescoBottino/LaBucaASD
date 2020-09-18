@@ -9,16 +9,16 @@ open class PausableChronometer @JvmOverloads constructor(
 ) : ChronometerWithHours(ctx, attrs, defStyleAttr) {
 
     enum class State {
-        IDLE, RUNNING, PAUSED
+        EMPTY, IDLE, RUNNING, PAUSED
     }
 
-    var currentState: State = State.IDLE
+    var currentState: State = State.EMPTY
         private set
     var totalElapsedSeconds: Long = 0L
         private set
 
     override fun start() {
-        if(currentState != State.IDLE) return
+        if(currentState != State.IDLE && currentState != State.EMPTY) return
 
         base = SystemClock.elapsedRealtime() + totalElapsedSeconds
         super.start()
@@ -62,12 +62,16 @@ open class PausableChronometer @JvmOverloads constructor(
 
         totalElapsedSeconds = 0L
         resetText()
+
+        currentState = State.EMPTY
+        stateListener?.onStateEmpty()
     }
 
     interface StateListener {
         fun onStateIdle()
         fun onStateRunning()
         fun onStatePaused()
+        fun onStateEmpty()
     }
     var stateListener: StateListener? = null
 }
