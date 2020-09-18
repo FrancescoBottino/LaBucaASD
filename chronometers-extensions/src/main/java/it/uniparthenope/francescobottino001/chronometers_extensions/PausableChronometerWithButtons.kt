@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.widget.Chronometer
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import androidx.cardview.widget.CardView
@@ -13,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.getDimensionOrThrow
 import androidx.core.content.res.getDimensionPixelSizeOrThrow
-import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer.StateListener
+import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer.OnStateChangedListener
 
 class PausableChronometerWithButtons @JvmOverloads constructor(
     ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -23,12 +22,12 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
         LayoutInflater.from(ctx).inflate(R.layout.pausable_chronometer_with_buttons, this, true)
     }
 
-    private val playButtonCard: CardView = this.findViewById(R.id.play_btn_card)
-    private val playButton: ImageButton = this.findViewById(R.id.play_btn)
-    private val stopButtonCard: CardView = this.findViewById(R.id.stop_btn_card)
-    private val stopButton: ImageButton = this.findViewById(R.id.stop_btn)
-    private val timerCard: CardView = this.findViewById(R.id.timer_card)
-    private val timer: PausableChronometer = this.findViewById(R.id.pausable_chronometer_display)
+    val playButtonCard: CardView = this.findViewById(R.id.play_btn_card)
+    val playButton: ImageButton = this.findViewById(R.id.play_btn)
+    val stopButtonCard: CardView = this.findViewById(R.id.stop_btn_card)
+    val stopButton: ImageButton = this.findViewById(R.id.stop_btn)
+    val timerCard: CardView = this.findViewById(R.id.timer_card)
+    val timer: PausableChronometer = this.findViewById(R.id.pausable_chronometer_display)
 
     private val playButtonColorEnabled: Int
     private val playButtonColorDisabled: Int
@@ -212,46 +211,45 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
         stopButtonInternalClickListener = stopAction
     }
 
-    private val wrapperStateListener: StateListener = object: StateListener {
-        override fun onStateIdle() {
-            setStateIdle()
-            stateListener?.onStateIdle()
-        }
-
-        override fun onStateRunning() {
-            setStateRunning()
-            stateListener?.onStateRunning()
-        }
-
-        override fun onStatePaused() {
-            setStatePaused()
-            stateListener?.onStatePaused()
-        }
-
-        override fun onStateEmpty() {
-            setStateEmpty()
-            stateListener?.onStateEmpty()
+    private val wrapperOnStateChangedListener: OnStateChangedListener = object: OnStateChangedListener {
+        override fun onStateChanged(state: PausableChronometer.State) {
+            when(state) {
+                PausableChronometer.State.IDLE -> setStateIdle()
+                PausableChronometer.State.EMPTY -> setStateEmpty()
+                PausableChronometer.State.RUNNING -> setStateRunning()
+                PausableChronometer.State.PAUSED -> setStatePaused()
+            }
+            onStateChangedListener?.onStateChanged(state)
         }
     }
 
     init {
         setStateEmpty()
-        timer.stateListener = wrapperStateListener
+        timer.onStateChangedListener = wrapperOnStateChangedListener
     }
 
     //SETTABLE LISTENERS
     var playButtonClickListener: OnClickListener? = null
     var stopButtonClickListener: OnClickListener? = null
-    var stateListener: StateListener? = null
+    var onStateChangedListener: OnStateChangedListener? = null
+    fun setOnStateChangedListener(listener: ((PausableChronometer.State)->Unit)?) {
+        listener?.let {
+            onStateChangedListener =
+                object : OnStateChangedListener {
+                    override fun onStateChanged(state: PausableChronometer.State) {
+                        listener.invoke(state)
+                    }
+                }
+        }
+    }
     fun setTimerLongClickListener(listener: OnLongClickListener?) {
         timer.setOnLongClickListener(listener)
     }
     fun setTimerTickListener(listener: ((Long, PausableChronometer.State)->Unit)?) {
         timer.setOnPausableChronometerTickListener(listener)
     }
-    fun setTimerTickListener(listener: PausableChronometer.OnPausableChronometerTickListener?) {
-        timer.setOnPausableChronometerTickListener(listener)
-    }
 
-    fun setChronometerState(state: PausableChronometer.State, seconds: Long = 0L) = timer.setChronometerState(state, seconds)
+    fun setChronometerState(state: PausableChronometer.State, seconds: Long = 0L) {
+        timer.setChronometerState(state, seconds)
+    }
 }

@@ -13,7 +13,10 @@ open class PausableChronometer @JvmOverloads constructor(
     }
 
     var currentState: State = State.EMPTY
-        private set
+        private set(value) {
+            field = value
+            onStateChangedListener?.onStateChanged(value)
+        }
     var totalElapsedSeconds: Long = 0L
         private set
 
@@ -24,7 +27,6 @@ open class PausableChronometer @JvmOverloads constructor(
         super.start()
 
         currentState = State.RUNNING
-        stateListener?.onStateRunning()
     }
 
     fun resume() {
@@ -34,27 +36,24 @@ open class PausableChronometer @JvmOverloads constructor(
         super.start()
 
         currentState = State.RUNNING
-        stateListener?.onStateRunning()
     }
 
     override fun stop() {
         if(currentState != State.RUNNING && currentState != State.PAUSED) return
 
-        totalElapsedSeconds = (base - SystemClock.elapsedRealtime()) / 1000L
+        totalElapsedSeconds = (SystemClock.elapsedRealtime() - base) / 1000L
         super.stop()
 
         currentState = State.IDLE
-        stateListener?.onStateIdle()
     }
 
     fun pause() {
         if(currentState != State.RUNNING) return
 
-        totalElapsedSeconds = (base - SystemClock.elapsedRealtime()) / 1000L
+        totalElapsedSeconds = (SystemClock.elapsedRealtime() - base) / 1000L
         super.stop()
 
         currentState = State.PAUSED
-        stateListener?.onStatePaused()
     }
 
     fun clear() {
@@ -64,16 +63,7 @@ open class PausableChronometer @JvmOverloads constructor(
         resetText()
 
         currentState = State.EMPTY
-        stateListener?.onStateEmpty()
     }
-
-    interface StateListener {
-        fun onStateIdle()
-        fun onStateRunning()
-        fun onStatePaused()
-        fun onStateEmpty()
-    }
-    var stateListener: StateListener? = null
 
     fun setChronometerState(state: State, seconds: Long = 0L) {
         when(state) {
@@ -89,21 +79,14 @@ open class PausableChronometer @JvmOverloads constructor(
                 }
 
                 currentState = state
-                when (state) {
-                    State.IDLE -> stateListener?.onStateIdle()
-                    State.PAUSED -> stateListener?.onStatePaused()
-                    State.EMPTY -> stateListener?.onStateEmpty()
-                    else -> {}
-                }
             }
             State.RUNNING -> {
                 totalElapsedSeconds = seconds
-                base = SystemClock.elapsedRealtime() - (totalElapsedSeconds * 1000L)
+                base = SystemClock.elapsedRealtime() + (totalElapsedSeconds * 1000L)
 
                 super.start()
 
                 currentState = State.RUNNING
-                stateListener?.onStateRunning()
             }
         }
     }
@@ -118,10 +101,25 @@ open class PausableChronometer @JvmOverloads constructor(
         }
     }
 
+    interface OnStateChangedListener {
+        fun onStateChanged(state: State)
+    }
+    var onStateChangedListener: OnStateChangedListener? = null
+    fun setOnStateChangedListener(listener: ((State)->Unit)?) {
+        listener?.let {
+            setOnStateChangedListener {
+                object : OnStateChangedListener {
+                    override fun onStateChanged(state: State) {
+                        listener.invoke(state)
+                    }
+                }
+            }
+        }
+    }
+
     interface OnPausableChronometerTickListener {
         fun onTick(elapsedSeconds: Long, currentState: State)
     }
-
     private var onPausableChronometerTickListener: OnPausableChronometerTickListener? = null
     fun setOnPausableChronometerTickListener(listener: ((Long, State)->Unit)?) {
         listener?.let {
