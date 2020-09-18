@@ -176,7 +176,7 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
         playButton.setImageDrawable(ContextCompat.getDrawable(context, playIconDrawable))
         playButton.setColorFilter(playButtonColorEnabled)
         playButton.isClickable = true
-        playButtonInternalClickListener = resumeAction
+        playButtonInternalClickListener = startAction
 
         stopButton.setImageDrawable(ContextCompat.getDrawable(context, stopIconDrawable))
         stopButton.setColorFilter(stopButtonColorDisabled)
@@ -242,7 +242,7 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     }
 
     init {
-        setStateIdle()
+        setStateEmpty()
         timer.stateListener = wrapperStateListener
     }
 }
