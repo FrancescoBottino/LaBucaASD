@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.widget.Chronometer
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import androidx.cardview.widget.CardView
@@ -144,14 +145,12 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     }
 
     private var playButtonInternalClickListener: OnClickListener? = null
-    var playButtonClickListener: OnClickListener? = null
     private val playButtonWrapperClickListener: OnClickListener? = OnClickListener {
         playButtonInternalClickListener?.onClick(it)
         playButtonClickListener?.onClick(it)
     }
 
     private var stopButtonInternalClickListener: OnClickListener? = null
-    var stopButtonClickListener: OnClickListener? = null
     private val stopButtonWrapperClickListener: OnClickListener? = OnClickListener {
         stopButtonInternalClickListener?.onClick(it)
         stopButtonClickListener?.onClick(it)
@@ -160,10 +159,6 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     init {
         playButton.setOnClickListener(playButtonWrapperClickListener)
         stopButton.setOnClickListener(stopButtonWrapperClickListener)
-    }
-
-    fun setTimerLongClickListener(listener: OnLongClickListener?) {
-        timer.setOnLongClickListener(listener)
     }
 
     private val startAction = OnClickListener{ timer.start() }
@@ -217,8 +212,6 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
         stopButtonInternalClickListener = stopAction
     }
 
-    var stateListener: StateListener? = null
-
     private val wrapperStateListener: StateListener = object: StateListener {
         override fun onStateIdle() {
             setStateIdle()
@@ -244,5 +237,16 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     init {
         setStateEmpty()
         timer.stateListener = wrapperStateListener
+    }
+
+    //SETTABLE LISTENERS
+    var playButtonClickListener: OnClickListener? = null
+    var stopButtonClickListener: OnClickListener? = null
+    var stateListener: StateListener? = null
+    fun setTimerLongClickListener(listener: OnLongClickListener?) {
+        timer.setOnLongClickListener(listener)
+    }
+    fun setTimerTickListener(listener: Chronometer.OnChronometerTickListener?) {
+        timer.onChronometerTickListener = listener
     }
 }
