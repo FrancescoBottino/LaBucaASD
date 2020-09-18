@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PausableChronometerWithButtons">
+        <attr name="playButtonEnabledColor" format="color"/>
+        <attr name="playButtonDisabledColor" format="color"/>
+        <attr name="stopButtonEnabledColor" format="color"/>
+        <attr name="stopButtonDisabledColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textColor" format="color"/>
+        <attr name="chronometerHorizontalPadding" format="dimension"/>
+        <attr name="chronometerVerticalPadding" format="dimension"/>
+        <attr name="cardsDistance" format="dimension"/>
+        <attr name="cardsCornerRadius" format="dimension"/>
+        <attr name="cardsElevation" format="dimension"/>
+        <attr name="cardsBackgroundColor" format="color"/>
+        <attr name="buttonsCardsSize" format="dimension"/>
+    </declare-styleable>
+</resources>

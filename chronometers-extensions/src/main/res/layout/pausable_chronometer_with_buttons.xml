@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/play_btn_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        app:cardCornerRadius="@dimen/default_cards_corner_radius"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/timer_card"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/play_btn"
+            android:layout_width="@dimen/default_buttons_size"
+            android:layout_height="@dimen/default_buttons_size"
+            android:background="@android:color/transparent"
+            android:minWidth="24dp"
+            android:minHeight="24dp"
+            android:scaleType="fitCenter"
+            android:tint="@color/btn_play_color_enabled"
+            app:srcCompat="@drawable/ic_baseline_play_arrow_24"
+            tools:ignore="ContentDescription" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/stop_btn_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        app:cardCornerRadius="@dimen/default_cards_corner_radius"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/timer_card"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/stop_btn"
+            android:layout_width="@dimen/default_buttons_size"
+            android:layout_height="@dimen/default_buttons_size"
+            android:background="@android:color/transparent"
+            android:backgroundTint="#6e6e6e"
+            android:minWidth="24dp"
+            android:minHeight="24dp"
+            android:scaleType="fitCenter"
+            android:tint="@color/btn_stop_color_enabled"
+            app:srcCompat="@drawable/ic_baseline_stop_24"
+            tools:ignore="ContentDescription" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/timer_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/default_cards_corner_radius"
+        app:cardElevation="4dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
+            android:id="@+id/timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_timer_horizontal_padding"
+            android:layout_marginTop="@dimen/default_timer_vertical_padding"
+            android:layout_marginEnd="@dimen/default_timer_horizontal_padding"
+            android:layout_marginBottom="@dimen/default_timer_vertical_padding"
+            android:gravity="center"
+            android:textSize="@dimen/default_timer_text_size" />
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

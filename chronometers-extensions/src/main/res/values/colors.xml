@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="btn_play_color_enabled">#6CB813</color>
+    <color name="btn_play_color_disabled">#798171</color>
+    <color name="btn_stop_color_enabled">#B51F1F</color>
+    <color name="btn_stop_color_disabled">#5A3838</color>
+</resources>

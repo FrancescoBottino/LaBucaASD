@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#21880c</color>
+    <color name="primaryLightColor">#5bb942</color>
+    <color name="primaryDarkColor">#005a00</color>
+    <color name="primaryTextColor">#ffffff</color>
+
+    <color name="colorBackground">#303030</color>
+    <color name="colorBackgroundLighter">#383838</color>
+    <color name="colorBackgroundLighterDivider">#525252</color>
+
+    <color name="colorError">#b00020</color>
+</resources>
