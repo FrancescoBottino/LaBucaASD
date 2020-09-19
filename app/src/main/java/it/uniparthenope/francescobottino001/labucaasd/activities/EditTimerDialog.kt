@@ -8,8 +8,6 @@ import android.widget.EditText
 import android.widget.TextView
 import it.uniparthenope.francescobottino001.labucaasd.R
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
-import kotlinx.android.synthetic.main.timers_list_item.*
-import java.lang.Exception
 
 class EditTimerDialog(ctx: Context, timerData: TimerData, callback: (String, Double)->Unit): AlertDialog(ctx) {
 

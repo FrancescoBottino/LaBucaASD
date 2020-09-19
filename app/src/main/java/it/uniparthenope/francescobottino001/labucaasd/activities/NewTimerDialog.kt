@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import it.uniparthenope.francescobottino001.labucaasd.R
-import java.lang.Exception
 
 class NewTimerDialog(ctx: Context, callback: (String, Double)->Unit): AlertDialog(ctx) {
 

@@ -5,13 +5,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import com.google.android.material.textfield.TextInputLayout
 import it.uniparthenope.francescobottino001.labucaasd.R
-import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
-import kotlinx.android.synthetic.main.timer_form_dialog.*
-import java.lang.Exception
 
 class DeleteTimerDialog(ctx: Context, callback: ()->Unit): AlertDialog(ctx) {
 

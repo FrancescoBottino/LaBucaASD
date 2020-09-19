@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.SystemClock
 import android.util.AttributeSet
 import android.widget.Chronometer
+import android.widget.Chronometer.OnChronometerTickListener
 
 open class ChronometerWithHours @JvmOverloads constructor(
     ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
