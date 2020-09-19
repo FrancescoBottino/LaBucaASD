@@ -234,14 +234,12 @@ class PausableChronometerWithButtons @JvmOverloads constructor(
     var stopButtonClickListener: OnClickListener? = null
     var onStateChangedListener: OnStateChangedListener? = null
     fun setOnStateChangedListener(listener: ((PausableChronometer.State)->Unit)?) {
-        listener?.let {
-            onStateChangedListener =
-                object : OnStateChangedListener {
-                    override fun onStateChanged(state: PausableChronometer.State) {
-                        listener.invoke(state)
-                    }
+        onStateChangedListener =
+            object : OnStateChangedListener {
+                override fun onStateChanged(state: PausableChronometer.State) {
+                    listener?.invoke(state)
                 }
-        }
+            }
     }
     fun setTimerLongClickListener(listener: OnLongClickListener?) {
         timer.setOnLongClickListener(listener)
