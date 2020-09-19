@@ -17,8 +17,6 @@ import it.uniparthenope.francescobottino001.labucaasd.activities.TimerBinder.Com
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.activity_main.*
 
-//TODO TIMER LONG CLICK SET TIME
-
 //TODO IMPROVE DIALOG FORM INTERFACE
 
 class MainActivity : BasicActivity(), ItemTouchCallback {
