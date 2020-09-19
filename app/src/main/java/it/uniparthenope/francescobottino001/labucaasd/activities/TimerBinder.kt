@@ -3,6 +3,7 @@ package it.uniparthenope.francescobottino001.labucaasd.activities
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.annotation.StringRes
 import com.google.android.material.card.MaterialCardView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.drag.IDraggable
@@ -49,23 +50,26 @@ class TimerBinder(
         private val deleteButton: ImageButton = root.findViewById(R.id.delete_button)
         private val editButton: ImageButton = root.findViewById(R.id.edit_button)
 
+        private fun formatCostWithString(cost: Double, @StringRes stringResource: Int): String {
+            return String.format(
+                Locale.ITALIAN,
+                root.context.resources.getString(stringResource),
+                cost
+            )
+        }
+
         private fun updateCostText(seconds: Long, hourlyCost: Double) {
             val totalCost = (hourlyCost / 3600) * seconds
-
-            totalCostLabel.text = String.format(
-                Locale.ITALIAN,
-                root.context.resources.getString(R.string.total_cost_label),
-                totalCost
+            totalCostLabel.text = formatCostWithString(
+                totalCost, R.string.total_cost_label
             )
         }
 
         override fun bindView(item: TimerBinder, payloads: List<Any>) {
             nameLabel.text = item.timerData.name
 
-            hourlyCostLabel.text = String.format(
-                Locale.ITALIAN,
-                root.context.resources.getString(R.string.hourly_cost_label),
-                item.timerData.hourlyCost
+            hourlyCostLabel.text = formatCostWithString(
+                item.timerData.hourlyCost, R.string.hourly_cost_label
             )
 
             updateCostText((item.timerData.elapsedSeconds?:0L), item.timerData.hourlyCost)
@@ -114,6 +118,7 @@ class TimerBinder(
             timer.setOnLongClickListener {
                 editTimerCallback?.let {
                     it.invoke(item, timer.timer)
+                    updateCallback?.invoke( item.timerData )
                     return@setOnLongClickListener true
                 } ?: return@setOnLongClickListener false
             }

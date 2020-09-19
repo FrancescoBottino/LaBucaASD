@@ -41,12 +41,12 @@ class MainActivity : BasicActivity(), ItemTouchCallback {
             .withNotifyAllDrops(true)
             .withSwipeRight(160) // each button (delete, edit) takes 80dp, for a total of 160
             .withSwipeLeft(0)
-            .withSensitivity(10f)
+            .withSensitivity(5f)
 
         val touchHelper = ItemTouchHelper(touchCallback)
         touchHelper.attachToRecyclerView(timers_list)
 
-        TimerBinder.updateCallback = viewModel::updateTimer
+        TimerBinder.updateCallback = this::updateTimer
         TimerBinder.deleteCallback = this::deleteTimer
         TimerBinder.editCallback = this::editTimer
         TimerBinder.editTimerCallback = this::setTime
@@ -56,6 +56,10 @@ class MainActivity : BasicActivity(), ItemTouchCallback {
         }
 
         fab.setOnClickListener{ newTimer() }
+    }
+
+    private fun updateTimer(timerData: TimerData) {
+        viewModel.updateTimer(timerData)
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
@@ -69,7 +73,7 @@ class MainActivity : BasicActivity(), ItemTouchCallback {
         adapter.adapterItems.forEach {
             val timer = it.timerData
             timer.ordinal = adapter.adapterItems.indexOf(it) + 1
-            viewModel.updateTimer(timer)
+            updateTimer(timer)
         }
     }
 
@@ -89,7 +93,7 @@ class MainActivity : BasicActivity(), ItemTouchCallback {
             item.timerData.name = name
             item.timerData.hourlyCost = hourlyCost
             adapter.notifyItemChanged( adapter.adapterItems.indexOf(item) )
-            viewModel.updateTimer(item.timerData)
+            updateTimer(item.timerData)
         }.show()
     }
 
@@ -112,7 +116,7 @@ class MainActivity : BasicActivity(), ItemTouchCallback {
                 state = PausableChronometer.State.IDLE
             }
             chronometer.setChronometerState( state, totalSeconds )
-            TimerBinder.updateCallback?.invoke(item.timerData)
+            updateTimer(item.timerData)
         }, h, m, s, true).show()
     }
 }
