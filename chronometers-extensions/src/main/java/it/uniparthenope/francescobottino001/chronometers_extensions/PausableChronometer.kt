@@ -90,8 +90,9 @@ open class PausableChronometer @JvmOverloads constructor(
                 currentState = state
             }
             State.RUNNING -> {
+                base = SystemClock.elapsedRealtime() - (seconds * 1000L)
                 totalElapsedSeconds = seconds
-                base = SystemClock.elapsedRealtime() + (totalElapsedSeconds * 1000L)
+                setText(seconds)
 
                 super.start()
 

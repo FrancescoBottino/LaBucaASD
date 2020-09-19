@@ -24,9 +24,13 @@ class MainViewModel(private val app: Application): AndroidViewModel(app) {
         }
     }
 
-    fun addTimer(timer: TimerData) {
+    fun addTimer(timer: TimerData, onComplete: (TimerData)->Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            db.timerDao().insert(timer)
+            timer.id = db.timerDao().insert(timer).toInt()
+        }.invokeOnCompletion {
+            viewModelScope.launch(Dispatchers.Main) {
+                onComplete(timer)
+            }
         }
     }
 

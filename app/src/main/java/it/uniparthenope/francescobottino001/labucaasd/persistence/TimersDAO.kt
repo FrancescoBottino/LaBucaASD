@@ -11,7 +11,7 @@ interface TimersDAO {
     suspend fun get(id: Int): TimerData
 
     @Insert
-    suspend fun insert(timerData: TimerData)
+    suspend fun insert(timerData: TimerData): Long
 
     @Update
     suspend fun update(timerData: TimerData)

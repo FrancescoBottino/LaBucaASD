@@ -12,6 +12,7 @@ import com.mikepenz.fastadapter.swipe.ISwipeable
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometerWithButtons
 import it.uniparthenope.francescobottino001.labucaasd.R
+import it.uniparthenope.francescobottino001.labucaasd.getIfNotNull
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import java.util.*
 
@@ -23,6 +24,8 @@ class TimerBinder(
         var updateCallback: ((TimerData) -> Unit)? = null
         var editCallback: ((TimerBinder) -> Unit)? = null
         var deleteCallback: ((TimerBinder) -> Unit)? = null
+
+        var editTimerCallback: ((TimerBinder, PausableChronometer) -> Unit)? = null
 
         fun List<TimerData>.toBinderArrayList(): ArrayList<TimerBinder> {
             val bindersList: ArrayList<TimerBinder> = arrayListOf()
@@ -46,7 +49,7 @@ class TimerBinder(
         private val deleteButton: ImageButton = root.findViewById(R.id.delete_button)
         private val editButton: ImageButton = root.findViewById(R.id.edit_button)
 
-        fun updateCostText(seconds: Long, hourlyCost: Double) {
+        private fun updateCostText(seconds: Long, hourlyCost: Double) {
             val totalCost = (hourlyCost / 3600) * seconds
 
             totalCostLabel.text = String.format(
@@ -67,16 +70,22 @@ class TimerBinder(
 
             updateCostText((item.timerData.elapsedSeconds?:0L), item.timerData.hourlyCost)
 
-            (item.timerData.state?: PausableChronometer.State.EMPTY).let { state ->
+            (item.timerData.state ?: PausableChronometer.State.EMPTY).let { state ->
                 when(state) {
                     PausableChronometer.State.RUNNING -> {
-                        item.timerData.savedAt?.let { calendar ->
+                        val totalSeconds = getIfNotNull(
+                            item.timerData.savedAt,
+                            item.timerData.elapsedSeconds
+                        ) { savedAt, elapsedSeconds ->
                             val now = Calendar.getInstance().timeInMillis
-                            val then = calendar.timeInMillis
-                            val seconds = (then - now) / 1000L
+                            val then = savedAt.timeInMillis
 
-                            timer.setChronometerState(state, seconds)
-                        } ?: timer.setChronometerState(state, (item.timerData.elapsedSeconds ?: 0L))
+                            val secondsPassed = (now - then) / 1000L
+
+                            elapsedSeconds + secondsPassed
+                        }
+
+                        timer.setChronometerState(state, totalSeconds?:0L)
                     }
                     PausableChronometer.State.EMPTY,
                     PausableChronometer.State.IDLE,
@@ -100,6 +109,13 @@ class TimerBinder(
 
             timer.setTimerTickListener { seconds, _ ->
                 updateCostText(seconds, item.timerData.hourlyCost)
+            }
+
+            timer.setOnLongClickListener {
+                editTimerCallback?.let {
+                    it.invoke(item, timer.timer)
+                    return@setOnLongClickListener true
+                } ?: return@setOnLongClickListener false
             }
 
             deleteButton.setOnClickListener {
