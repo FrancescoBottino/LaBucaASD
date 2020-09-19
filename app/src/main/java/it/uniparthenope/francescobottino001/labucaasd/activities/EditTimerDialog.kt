@@ -24,7 +24,7 @@ class EditTimerDialog(ctx: Context, timerData: TimerData, callback: (String, Dou
 
         title.text = this.context.resources.getString(R.string.edit_timer_dialog_title)
 
-        positiveButton.text = this.context.resources.getString(R.string.new_timer_dialog_positive_button)
+        positiveButton.text = this.context.resources.getString(R.string.edit_timer_dialog_positive_button)
         negativeButton.text = this.context.resources.getString(R.string.timer_dialog_negative_button)
 
         nameField.setText(timerData.name)
