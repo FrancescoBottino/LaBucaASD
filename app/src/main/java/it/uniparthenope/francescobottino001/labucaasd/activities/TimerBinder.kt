@@ -1,9 +1,14 @@
 package it.uniparthenope.francescobottino001.labucaasd.activities
 
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
+import com.google.android.material.card.MaterialCardView
 import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.drag.IDraggable
 import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.swipe.IDrawerSwipeableViewHolder
+import com.mikepenz.fastadapter.swipe.ISwipeable
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometerWithButtons
 import it.uniparthenope.francescobottino001.labucaasd.R
@@ -12,10 +17,12 @@ import java.util.*
 
 class TimerBinder(
     val timerData: TimerData
-) : AbstractItem<TimerBinder.ViewHolder>() {
+) : AbstractItem<TimerBinder.ViewHolder>(), ISwipeable, IDraggable {
 
     companion object {
-        var saveCallback: ((TimerData) -> Unit)? = null
+        var updateCallback: ((TimerData) -> Unit)? = null
+        var editCallback: ((TimerBinder) -> Unit)? = null
+        var deleteCallback: ((TimerBinder) -> Unit)? = null
 
         fun List<TimerData>.toBinderArrayList(): ArrayList<TimerBinder> {
             val bindersList: ArrayList<TimerBinder> = arrayListOf()
@@ -26,11 +33,18 @@ class TimerBinder(
         }
     }
 
-    class ViewHolder(private val root: View): FastAdapter.ViewHolder<TimerBinder>(root) {
+    class ViewHolder(private val root: View): FastAdapter.ViewHolder<TimerBinder>(root),
+        IDrawerSwipeableViewHolder {
+
         private val timer: PausableChronometerWithButtons = root.findViewById(R.id.timer)
         private val nameLabel: TextView = root.findViewById(R.id.name_label)
         private val hourlyCostLabel: TextView = root.findViewById(R.id.hourly_cost_label)
         private val totalCostLabel: TextView = root.findViewById(R.id.total_cost_label)
+
+        override val swipeableView: MaterialCardView = root.findViewById(R.id.content)
+
+        private val deleteButton: ImageButton = root.findViewById(R.id.delete_button)
+        private val editButton: ImageButton = root.findViewById(R.id.edit_button)
 
         fun updateCostText(seconds: Long, hourlyCost: Double) {
             val totalCost = (hourlyCost / 3600) * seconds
@@ -75,19 +89,25 @@ class TimerBinder(
             }
 
             timer.setOnStateChangedListener { state ->
-                val timerData = item.timerData
+                item.timerData.state = state
+                item.timerData.elapsedSeconds = timer.timer.totalElapsedSeconds
+                item.timerData.savedAt = Calendar.getInstance()
 
-                timerData.state = state
-                timerData.elapsedSeconds = timer.timer.totalElapsedSeconds
-                timerData.savedAt = Calendar.getInstance()
-
-                saveCallback?.invoke( timerData )
+                updateCallback?.invoke( item.timerData )
 
                 updateCostText(timer.timer.totalElapsedSeconds, item.timerData.hourlyCost)
             }
 
             timer.setTimerTickListener { seconds, _ ->
                 updateCostText(seconds, item.timerData.hourlyCost)
+            }
+
+            deleteButton.setOnClickListener {
+                deleteCallback?.invoke(item)
+            }
+
+            editButton.setOnClickListener {
+                editCallback?.invoke(item)
             }
         }
 
@@ -99,6 +119,8 @@ class TimerBinder(
             timer.setOnStateChangedListener(null)
             timer.setTimerTickListener(null)
             timer.setChronometerState(PausableChronometer.State.EMPTY, 0L)
+            deleteButton.setOnClickListener(null)
+            editButton.setOnClickListener(null)
         }
     }
 
@@ -108,4 +130,6 @@ class TimerBinder(
         get() = R.id.timer_item
 
     override fun getViewHolder(v: View): ViewHolder = ViewHolder(v)
+    override val isSwipeable: Boolean = true
+    override val isDraggable: Boolean = true
 }
