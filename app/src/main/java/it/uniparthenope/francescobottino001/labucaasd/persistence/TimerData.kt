@@ -11,7 +11,7 @@ import java.util.*
  */
 
 @Entity(tableName = "timer")
-data class TimerData(
+class TimerData(
     @ColumnInfo(name = "name")
     var name: String,
     @ColumnInfo(name = "hourly_cost")
@@ -27,4 +27,6 @@ data class TimerData(
 
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
-)
+) {
+    fun getTotalCost(seconds: Long): Double = (hourlyCost / 3600) * seconds
+}

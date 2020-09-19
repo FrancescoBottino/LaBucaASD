@@ -34,10 +34,9 @@ class TimerBinderViewHolder(private val root: View): FastAdapter.ViewHolder<Time
         )
     }
 
-    private fun updateCostText(seconds: Long, hourlyCost: Double) {
-        val totalCost = (hourlyCost / 3600) * seconds
+    private fun updateCostText(item: TimerBinder, seconds: Long) {
         totalCostLabel.text = formatCostWithString(
-            totalCost, R.string.total_cost_label
+            item.timerData.getTotalCost(seconds), R.string.total_cost_label
         )
     }
 
@@ -48,7 +47,7 @@ class TimerBinderViewHolder(private val root: View): FastAdapter.ViewHolder<Time
             item.timerData.hourlyCost, R.string.hourly_cost_label
         )
 
-        updateCostText((item.timerData.elapsedSeconds?:0L), item.timerData.hourlyCost)
+        updateCostText(item, item.timerData.elapsedSeconds?:0L)
 
         (item.timerData.state ?: PausableChronometer.State.EMPTY).let { state ->
             when(state) {
@@ -83,11 +82,11 @@ class TimerBinderViewHolder(private val root: View): FastAdapter.ViewHolder<Time
             item.timerData.savedAt = Calendar.getInstance()
 
             TimerBinder.updateCallback?.invoke( item.timerData )
-            updateCostText(timer.timer.totalElapsedSeconds, item.timerData.hourlyCost)
+            updateCostText(item, timer.timer.totalElapsedSeconds)
         }
 
         timer.setTimerTickListener { seconds, _ ->
-            updateCostText(seconds, item.timerData.hourlyCost)
+            updateCostText(item , seconds)
         }
 
         timer.setOnLongClickListener {
