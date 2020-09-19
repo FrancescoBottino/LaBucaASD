@@ -17,8 +17,6 @@ import it.uniparthenope.francescobottino001.labucaasd.activities.TimerBinder.Com
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.activity_main.*
 
-//TODO IMPROVE DIALOG FORM INTERFACE
-
 class MainActivity : BasicActivity(), ItemTouchCallback {
 
     private val viewModel: MainViewModel by viewModels()
