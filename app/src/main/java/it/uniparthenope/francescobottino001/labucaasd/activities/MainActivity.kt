@@ -49,15 +49,7 @@ class MainActivity : BasicActivity(), ItemTouchCallback {
             adapter.set(timers.toBinderArrayList())
         }
 
-        fab.setOnClickListener {
-            NewTimerDialog(this) { name, hourlyCost ->
-                val ordinal = adapter.adapterItems.size + 1
-                val newTimer = TimerData(name, hourlyCost, ordinal)
-
-                adapter.itemAdapter.add(TimerBinder(newTimer))
-                viewModel.addTimer(newTimer)
-            }.show()
-        }
+        fab.setOnClickListener{ newTimer() }
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
@@ -73,6 +65,16 @@ class MainActivity : BasicActivity(), ItemTouchCallback {
             timer.ordinal = adapter.adapterItems.indexOf(it) + 1
             viewModel.updateTimer(timer)
         }
+    }
+
+    fun newTimer() {
+        NewTimerDialog(this) { name, hourlyCost ->
+            val ordinal = adapter.adapterItems.size + 1
+            val newTimer = TimerData(name, hourlyCost, ordinal)
+
+            adapter.itemAdapter.add(TimerBinder(newTimer))
+            viewModel.addTimer(newTimer)
+        }.show()
     }
 
     fun editTimer(item: TimerBinder) {
