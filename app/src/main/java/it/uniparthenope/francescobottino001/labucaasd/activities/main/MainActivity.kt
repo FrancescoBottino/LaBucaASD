@@ -1,4 +1,4 @@
-package it.uniparthenope.francescobottino001.labucaasd.activities
+package it.uniparthenope.francescobottino001.labucaasd.activities.main
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -13,7 +13,7 @@ import com.mikepenz.itemanimators.AlphaInAnimator
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.labucaasd.BasicActivity
 import it.uniparthenope.francescobottino001.labucaasd.R
-import it.uniparthenope.francescobottino001.labucaasd.activities.TimerBinder.Companion.toBinderArrayList
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.TimerBinder.Companion.toBinderArrayList
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.activity_main.*
 

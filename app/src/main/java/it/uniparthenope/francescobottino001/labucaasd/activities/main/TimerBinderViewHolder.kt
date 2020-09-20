@@ -1,4 +1,4 @@
-package it.uniparthenope.francescobottino001.labucaasd.activities
+package it.uniparthenope.francescobottino001.labucaasd.activities.main
 
 import android.view.View
 import android.widget.ImageButton
@@ -13,8 +13,9 @@ import it.uniparthenope.francescobottino001.labucaasd.R
 import it.uniparthenope.francescobottino001.labucaasd.getIfNotNull
 import java.util.*
 
-class TimerBinderViewHolder(private val root: View): FastAdapter.ViewHolder<TimerBinder>(root),
-    IDrawerSwipeableViewHolder {
+class TimerBinderViewHolder(
+    private val root: View
+): FastAdapter.ViewHolder<TimerBinder>(root), IDrawerSwipeableViewHolder {
 
     private val timer: PausableChronometerWithButtons = root.findViewById(R.id.timer)
     private val nameLabel: TextView = root.findViewById(R.id.name_label)

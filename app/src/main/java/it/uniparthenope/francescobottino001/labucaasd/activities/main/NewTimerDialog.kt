@@ -1,4 +1,4 @@
-package it.uniparthenope.francescobottino001.labucaasd.activities
+package it.uniparthenope.francescobottino001.labucaasd.activities.main
 
 import android.app.AlertDialog
 import android.content.Context
