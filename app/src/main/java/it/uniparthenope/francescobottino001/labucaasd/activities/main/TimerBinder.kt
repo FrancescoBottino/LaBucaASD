@@ -14,12 +14,6 @@ class TimerBinder(
 ) : AbstractItem<TimerBinderViewHolder>(), ISwipeable, IDraggable {
 
     companion object {
-        var updateCallback: ((TimerData) -> Unit)? = null
-        var editCallback: ((TimerBinder) -> Unit)? = null
-        var deleteCallback: ((TimerBinder) -> Unit)? = null
-
-        var editTimerCallback: ((TimerBinder, PausableChronometer) -> Unit)? = null
-
         fun List<TimerData>.toBinderArrayList(): ArrayList<TimerBinder> {
             val bindersList: ArrayList<TimerBinder> = arrayListOf()
             this.forEach {
@@ -27,6 +21,66 @@ class TimerBinder(
             }
             return bindersList
         }
+
+        fun ArrayList<TimerBinder>.withUpdateCallback(
+            callback: ((TimerData) -> Unit)?
+        ): ArrayList<TimerBinder> {
+            this.forEach {
+                it.updateCallback = callback
+            }
+            return this
+        }
+
+        fun ArrayList<TimerBinder>.withEditCallback(
+            callback: ((TimerBinder) -> Unit)?
+        ): ArrayList<TimerBinder> {
+            this.forEach {
+                it.editCallback = callback
+            }
+            return this
+        }
+
+        fun ArrayList<TimerBinder>.withDeleteCallback(
+            callback: ((TimerBinder) -> Unit)?
+        ): ArrayList<TimerBinder> {
+            this.forEach {
+                it.deleteCallback = callback
+            }
+            return this
+        }
+
+        fun ArrayList<TimerBinder>.withEditChronometerCallback(
+            callback: ((TimerBinder, PausableChronometer) -> Unit)?
+        ): ArrayList<TimerBinder> {
+            this.forEach {
+                it.editChronometerCallback = callback
+            }
+            return this
+        }
+    }
+
+    var updateCallback: ((TimerData) -> Unit)? = null
+    fun withUpdateCallback(callback: ((TimerData) -> Unit)?): TimerBinder {
+        this.updateCallback = callback
+        return this
+    }
+
+    var editCallback: ((TimerBinder) -> Unit)? = null
+    fun withEditCallback(callback: ((TimerBinder) -> Unit)?): TimerBinder {
+        this.editCallback = callback
+        return this
+    }
+
+    var deleteCallback: ((TimerBinder) -> Unit)? = null
+    fun withDeleteCallback(callback: ((TimerBinder) -> Unit)?): TimerBinder {
+        this.deleteCallback = callback
+        return this
+    }
+
+    var editChronometerCallback: ((TimerBinder, PausableChronometer) -> Unit)? = null
+    fun withEditChronometerCallback(callback: ((TimerBinder, PausableChronometer) -> Unit)?): TimerBinder {
+        this.editChronometerCallback = callback
+        return this
     }
 
     override val layoutRes: Int

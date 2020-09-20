@@ -82,7 +82,7 @@ class TimerBinderViewHolder(
             item.timerData.elapsedSeconds = timer.timer.totalElapsedSeconds
             item.timerData.savedAt = Calendar.getInstance()
 
-            TimerBinder.updateCallback?.invoke( item.timerData )
+            item.updateCallback?.invoke( item.timerData )
             updateCostText(item, timer.timer.totalElapsedSeconds)
         }
 
@@ -91,19 +91,19 @@ class TimerBinderViewHolder(
         }
 
         timer.setOnLongClickListener {
-            TimerBinder.editTimerCallback?.let {
+            item.editChronometerCallback?.let {
                 it.invoke(item, timer.timer)
-                TimerBinder.updateCallback?.invoke( item.timerData )
+                item.updateCallback?.invoke( item.timerData )
                 return@setOnLongClickListener true
             } ?: return@setOnLongClickListener false
         }
 
         deleteButton.setOnClickListener {
-            TimerBinder.deleteCallback?.invoke(item)
+            item.deleteCallback?.invoke(item)
         }
 
         editButton.setOnClickListener {
-            TimerBinder.editCallback?.invoke(item)
+            item.editCallback?.invoke(item)
         }
     }
 
