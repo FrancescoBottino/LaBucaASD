@@ -1,4 +1,4 @@
-package it.uniparthenope.francescobottino001.labucaasd.activities.main
+package it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list
 
 import android.view.View
 import com.mikepenz.fastadapter.drag.IDraggable

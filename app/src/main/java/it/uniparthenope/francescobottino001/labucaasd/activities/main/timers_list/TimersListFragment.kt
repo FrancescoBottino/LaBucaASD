@@ -1,4 +1,4 @@
-package it.uniparthenope.francescobottino001.labucaasd.activities.main
+package it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,11 +16,12 @@ import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.itemanimators.AlphaInAnimator
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.labucaasd.R
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.TimerBinder.Companion.toBinderArrayList
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.TimerBinder.Companion.withDeleteCallback
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.TimerBinder.Companion.withEditCallback
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.TimerBinder.Companion.withEditChronometerCallback
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.TimerBinder.Companion.withUpdateCallback
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.toBinderArrayList
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withDeleteCallback
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditCallback
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditChronometerCallback
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withUpdateCallback
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 

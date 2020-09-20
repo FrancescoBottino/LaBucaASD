@@ -1,4 +1,4 @@
-package it.uniparthenope.francescobottino001.labucaasd.activities.main
+package it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list
 
 import android.app.AlertDialog
 import android.content.Context
@@ -8,9 +8,8 @@ import android.widget.EditText
 import android.widget.TextView
 import com.google.android.material.textfield.TextInputLayout
 import it.uniparthenope.francescobottino001.labucaasd.R
-import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 
-class EditTimerDialog(ctx: Context, timerData: TimerData, callback: (String, Double)->Unit): AlertDialog(ctx) {
+class NewTimerDialog(ctx: Context, callback: (String, Double)->Unit): AlertDialog(ctx) {
 
     private val root = LayoutInflater.from(ctx).inflate(R.layout.timer_form_dialog, null, true)
 
@@ -25,13 +24,10 @@ class EditTimerDialog(ctx: Context, timerData: TimerData, callback: (String, Dou
     init {
         setView(root)
 
-        title.text = this.context.resources.getString(R.string.edit_timer_dialog_title)
+        title.text = this.context.resources.getString(R.string.new_timer_dialog_title)
 
-        positiveButton.text = this.context.resources.getString(R.string.edit_timer_dialog_positive_button)
+        positiveButton.text = this.context.resources.getString(R.string.new_timer_dialog_positive_button)
         negativeButton.text = this.context.resources.getString(R.string.timer_dialog_negative_button)
-
-        nameField.setText(timerData.name)
-        hourlyCostField.setText(timerData.hourlyCost.toString())
 
         positiveButton.setOnClickListener {
             var errors = false
