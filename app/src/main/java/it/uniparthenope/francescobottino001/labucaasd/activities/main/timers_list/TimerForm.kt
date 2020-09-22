@@ -19,13 +19,26 @@ class TimerForm @JvmOverloads constructor(
         LayoutInflater.from(ctx).inflate(R.layout.timer_form, this, true)
     }
 
-    val title: TextView = this.findViewById(R.id.alert_title)
-    val nameFieldLayout: TextInputLayout = this.findViewById(R.id.name_field_layout)
-    val hourlyCostFieldLayout: TextInputLayout = this.findViewById(R.id.hourly_cost_field_layout)
-    val nameField: EditText = this.findViewById(R.id.name_field)
-    val hourlyCostField: EditText = this.findViewById(R.id.hourly_cost_field)
-    val positiveButton: Button = this.findViewById(R.id.positive_button)
-    val negativeButton: Button = this.findViewById(R.id.negative_button)
+    private val title: TextView = this.findViewById(R.id.alert_title)
+    private val nameFieldLayout: TextInputLayout = this.findViewById(R.id.name_field_layout)
+    private val hourlyCostFieldLayout: TextInputLayout = this.findViewById(R.id.hourly_cost_field_layout)
+    private val nameField: EditText = this.findViewById(R.id.name_field)
+    private val hourlyCostField: EditText = this.findViewById(R.id.hourly_cost_field)
+    private val positiveButton: Button = this.findViewById(R.id.positive_button)
+    private val negativeButton: Button = this.findViewById(R.id.negative_button)
+
+    init {
+        nameFieldLayout.apply {
+            setErrorIconOnClickListener {
+                this.error = null
+            }
+        }
+        hourlyCostFieldLayout.apply {
+            setErrorIconOnClickListener {
+                this.error = null
+            }
+        }
+    }
 
     enum class FORM_TYPE(
         @StringRes val titleString: Int,
@@ -105,5 +118,9 @@ class TimerForm @JvmOverloads constructor(
     var dismissFormCallback: (() -> Unit)? = null
     fun dismiss() {
         dismissFormCallback?.invoke() ?: throw Exception()
+        nameField.text = null
+        hourlyCostField.text = null
+        nameFieldLayout.error = null
+        hourlyCostFieldLayout.error = null
     }
 }

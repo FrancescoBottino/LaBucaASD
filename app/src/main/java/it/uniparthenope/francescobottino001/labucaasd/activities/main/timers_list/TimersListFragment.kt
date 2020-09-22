@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +16,7 @@ import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.itemanimators.AlphaInAnimator
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
+import it.uniparthenope.francescobottino001.labucaasd.BaseFragment
 import it.uniparthenope.francescobottino001.labucaasd.R
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.toBinderArrayList
@@ -27,7 +27,7 @@ import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_lis
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 
-class TimersListFragment: Fragment(), ItemTouchCallback {
+class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
     companion object {
         fun newInstance() = TimersListFragment()
@@ -35,6 +35,7 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: FastItemAdapter<TimerBinder>
+    private var isFormShowing: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +70,7 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
 
         fab.setOnClickListener{
             timer_form.showFormCallback = {
+                isFormShowing = true
                 screen.animate().apply {
                     alpha(1f)
                     duration = 550L
@@ -86,6 +88,7 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
                 fab_to_new_timer_transformation_layout.startTransform()
             }
             timer_form.dismissFormCallback = {
+                isFormShowing = false
                 fab_to_new_timer_transformation_layout.finishTransform()
                 screen.animate().apply {
                     alpha(0.0f)
@@ -134,6 +137,13 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
         }
     }
 
+    override fun onBackPressed(): Boolean {
+        return if(isFormShowing) {
+            timer_form.dismiss()
+            true
+        } else false
+    }
+
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
         DragDropUtil.onMove(adapter.itemAdapter, oldPosition, newPosition)
         return true
@@ -154,7 +164,13 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
         val newTimer = TimerData(name, hourlyCost, ordinal)
 
         viewModel.addTimer(newTimer) { it ->
-            adapter.itemAdapter.add(TimerBinder(it))
+            adapter.itemAdapter.add(
+                TimerBinder(it)
+                    .withEditCallback(this::editTimer)
+                    .withDeleteCallback(this::deleteTimer)
+                    .withUpdateCallback(this::updateTimer)
+                    .withEditChronometerCallback(this::setTime)
+            )
         }
     }
 

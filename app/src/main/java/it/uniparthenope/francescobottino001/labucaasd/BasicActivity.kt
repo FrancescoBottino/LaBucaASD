@@ -38,4 +38,19 @@ open class BasicActivity : AppCompatActivity() {
         val intent = Intent(this, activityClass)
         this.startActivity(intent)
     }
+
+    override fun onBackPressed() {
+        var handled = false
+        for (f in supportFragmentManager.fragments) {
+            if (f is BaseFragment) {
+                handled = f.onBackPressed()
+                if (handled) {
+                    break
+                }
+            }
+        }
+        if (!handled) {
+            super.onBackPressed()
+        }
+    }
 }
