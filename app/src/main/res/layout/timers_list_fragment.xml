@@ -11,18 +11,62 @@
         android:id="@+id/timers_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/timers_list_item" />
+        android:elevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/timers_list_item"
+        android:translationZ="0dp" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <com.skydoves.transformationlayout.TransformationLayout
+        android:id="@+id/fab_to_new_timer_transformation_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="14dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@drawable/ic_round_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:transformation_duration="550"
+        app:transformation_fadeMode="cross"
+        android:translationZ="6dp"
+        app:transformation_targetView="@+id/timer_form">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_round_add_24"
+            app:elevation="6dp" />
+    </com.skydoves.transformationlayout.TransformationLayout>
+
+    <it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerForm
+        android:id="@+id/timer_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:elevation="8dp"
+        android:visibility="gone"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="6dp" />
+
+    <View
+        android:id="@+id/screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#52000000"
+        android:translationZ="2dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

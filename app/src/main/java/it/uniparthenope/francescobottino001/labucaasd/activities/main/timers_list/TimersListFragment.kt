@@ -1,5 +1,6 @@
 package it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list
 
+import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDrawerDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.itemanimators.AlphaInAnimator
+import com.skydoves.transformationlayout.onTransformationStartContainer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.labucaasd.R
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
@@ -33,6 +35,11 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: FastItemAdapter<TimerBinder>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onTransformationStartContainer()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +67,57 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
 
         touchHelper.attachToRecyclerView(timers_list)
 
-        fab.setOnClickListener{ newTimer() }
+        fab.setOnClickListener{
+            timer_form.showFormCallback = {
+                screen.animate().apply {
+                    alpha(1f)
+                    duration = 550L
+                    setListener(
+                        object: Animator.AnimatorListener {
+                            override fun onAnimationStart(p0: Animator?) {
+                                screen.visibility = View.VISIBLE
+                            }
+                            override fun onAnimationEnd(p0: Animator?) {}
+                            override fun onAnimationCancel(p0: Animator?) {}
+                            override fun onAnimationRepeat(p0: Animator?) {}
+                        }
+                    )
+                }
+                fab_to_new_timer_transformation_layout.startTransform()
+            }
+            timer_form.dismissFormCallback = {
+                fab_to_new_timer_transformation_layout.finishTransform()
+                screen.animate().apply {
+                    alpha(0.0f)
+                    duration = 550L
+                    setListener(
+                        object: Animator.AnimatorListener {
+                            override fun onAnimationStart(p0: Animator?) {}
+                            override fun onAnimationEnd(p0: Animator?) {
+                                screen.visibility = View.GONE
+                            }
+                            override fun onAnimationCancel(p0: Animator?) {}
+                            override fun onAnimationRepeat(p0: Animator?) {}
+                        }
+                    )
+                }
+            }
+            timer_form.setUpLayout(
+                TimerForm.FORM_TYPE.NEW_TIMER, {
+                    try {
+                        timer_form.getFormData(::newTimer)
+                        timer_form.dismiss()
+                    } catch (ignored: Exception) {}
+                }, {
+                    timer_form.dismiss()
+                }
+            )
+            timer_form.show()
+        }
+
+        screen.setOnClickListener {
+            timer_form.dismiss()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -75,10 +132,6 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
                     .withEditChronometerCallback(this::setTime)
             )
         }
-    }
-
-    private fun updateTimer(timerData: TimerData) {
-        viewModel.updateTimer(timerData)
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
@@ -96,17 +149,17 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
         }
     }
 
-    private fun newTimer() {
-        activity?.let { ctx ->
-            NewTimerDialog(ctx) { name, hourlyCost ->
-                val ordinal = adapter.adapterItems.size + 1
-                val newTimer = TimerData(name, hourlyCost, ordinal)
+    private fun newTimer(name: String, hourlyCost: Double) {
+        val ordinal = adapter.adapterItems.size + 1
+        val newTimer = TimerData(name, hourlyCost, ordinal)
 
-                viewModel.addTimer(newTimer) { it ->
-                    adapter.itemAdapter.add(TimerBinder(it))
-                }
-            }.show()
+        viewModel.addTimer(newTimer) { it ->
+            adapter.itemAdapter.add(TimerBinder(it))
         }
+    }
+
+    private fun updateTimer(timerData: TimerData) {
+        viewModel.updateTimer(timerData)
     }
 
     private fun editTimer(item: TimerBinder) {
@@ -114,8 +167,9 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
             EditTimerDialog(ctx, item.timerData) { name, hourlyCost ->
                 item.timerData.name = name
                 item.timerData.hourlyCost = hourlyCost
-                adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
-                updateTimer(item.timerData)
+                viewModel.updateTimer(item.timerData) { it ->
+                    adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
+                }
             }.show()
         }
     }
@@ -123,8 +177,9 @@ class TimersListFragment: Fragment(), ItemTouchCallback {
     private fun deleteTimer(item: TimerBinder) {
         activity?.let { ctx ->
             DeleteTimerDialog(ctx) {
-                adapter.remove(adapter.adapterItems.indexOf(item))
-                viewModel.deleteTimer(item.timerData)
+                viewModel.deleteTimer(item.timerData) {
+                    adapter.remove(adapter.adapterItems.indexOf(item))
+                }
             }.show()
         }
     }
