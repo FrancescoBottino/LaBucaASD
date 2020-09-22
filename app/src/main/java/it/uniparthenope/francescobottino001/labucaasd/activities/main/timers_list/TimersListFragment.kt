@@ -1,6 +1,5 @@
 package it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list
 
-import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -71,39 +70,17 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         fab.setOnClickListener{
             timer_form.showFormCallback = {
                 isFormShowing = true
-                screen.animate().apply {
-                    alpha(1f)
-                    duration = 550L
-                    setListener(
-                        object: Animator.AnimatorListener {
-                            override fun onAnimationStart(p0: Animator?) {
-                                screen.visibility = View.VISIBLE
-                            }
-                            override fun onAnimationEnd(p0: Animator?) {}
-                            override fun onAnimationCancel(p0: Animator?) {}
-                            override fun onAnimationRepeat(p0: Animator?) {}
-                        }
-                    )
-                }
+                overlay.fadeIn(
+                    fab_to_new_timer_transformation_layout.duration
+                )
                 fab_to_new_timer_transformation_layout.startTransform()
             }
             timer_form.dismissFormCallback = {
                 isFormShowing = false
                 fab_to_new_timer_transformation_layout.finishTransform()
-                screen.animate().apply {
-                    alpha(0.0f)
-                    duration = 550L
-                    setListener(
-                        object: Animator.AnimatorListener {
-                            override fun onAnimationStart(p0: Animator?) {}
-                            override fun onAnimationEnd(p0: Animator?) {
-                                screen.visibility = View.GONE
-                            }
-                            override fun onAnimationCancel(p0: Animator?) {}
-                            override fun onAnimationRepeat(p0: Animator?) {}
-                        }
-                    )
-                }
+                overlay.fadeOut(
+                    fab_to_new_timer_transformation_layout.duration
+                )
             }
             timer_form.setUpLayout(
                 TimerForm.FORM_TYPE.NEW_TIMER, {
@@ -118,7 +95,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
             timer_form.show()
         }
 
-        screen.setOnClickListener {
+        overlay.setOnClickListener {
             timer_form.dismiss()
         }
     }

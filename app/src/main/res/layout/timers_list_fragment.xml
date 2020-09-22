@@ -57,10 +57,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:translationZ="6dp" />
 
-    <View
-        android:id="@+id/screen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.Overlay
+        android:id="@+id/overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#52000000"
         android:translationZ="2dp"
         android:visibility="gone"
