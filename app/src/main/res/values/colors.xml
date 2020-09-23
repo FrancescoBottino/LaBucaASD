@@ -10,4 +10,7 @@
     <color name="colorBackgroundLighterDivider">#525252</color>
 
     <color name="colorError">#b00020</color>
+
+    <color name="edit_action">#4CAF50</color>
+    <color name="delete_action">#871919</color>
 </resources>

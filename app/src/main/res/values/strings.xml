@@ -9,9 +9,11 @@
     <string name="new_timer_dialog_wrong_cost_error">Inserisci un costo corretto</string>
     <string name="delete_timer_dialog_title">Cancellare ?</string>
     <string name="delete_timer_dialog_positive_button">CANCELLA</string>
+    <string name="delete_action">Cancella</string>
     <string name="name_field_hint">Nome</string>
     <string name="hourly_cost_field_hint">Costo orario</string>
     <string name="edit_timer_dialog_title">Modifica</string>
     <string name="edit_timer_dialog_positive_button">Modifica</string>
     <string name="user_name_field_hint">Giocatore</string>
+    <string name="edit_action">Modifica</string>
 </resources>
