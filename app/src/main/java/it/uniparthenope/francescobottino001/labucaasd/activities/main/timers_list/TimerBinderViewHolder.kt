@@ -22,7 +22,10 @@ class TimerBinderViewHolder(
     private val hourlyCostLabel: TextView = root.findViewById(R.id.hourly_cost_label)
     private val totalCostLabel: TextView = root.findViewById(R.id.total_cost_label)
 
-    override val swipeableView: MaterialCardView = root.findViewById(R.id.content)
+    override val swipeableView: MaterialCardView = root.findViewById<MaterialCardView>(R.id.content).apply {
+        // prevents clicks going through the cardview and triggering the buttons
+        setOnClickListener {}
+    }
 
     private val deleteButton: ImageButton = root.findViewById(R.id.delete_button)
     private val editButton: ImageButton = root.findViewById(R.id.edit_button)

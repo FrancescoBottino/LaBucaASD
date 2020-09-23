@@ -68,8 +68,6 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
         touchHelper.attachToRecyclerView(timers_list)
 
-        //TODO prevent edit and delete buttons from being clicked through the recyclerview item (see callback touch transmitter)
-
         fab.setOnClickListener{
             timer_form.showFormCallback = {
                 isFormShowing = true
