@@ -12,13 +12,15 @@
         android:id="@+id/timers_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:elevation="0dp"
+        android:paddingBottom="86dp"
+        android:translationZ="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/timers_list_item"
-        android:translationZ="0dp" />
+        tools:listitem="@layout/timers_list_item" />
 
     <com.skydoves.transformationlayout.TransformationLayout
         android:id="@+id/fab_to_new_timer_transformation_layout"
@@ -35,8 +37,8 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_round_add_24"

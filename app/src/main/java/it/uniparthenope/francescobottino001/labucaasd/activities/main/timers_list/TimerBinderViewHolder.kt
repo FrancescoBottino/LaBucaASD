@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import com.google.android.material.card.MaterialCardView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.swipe.IDrawerSwipeableViewHolder
+import com.skydoves.transformationlayout.TransformationLayout
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometerWithButtons
 import it.uniparthenope.francescobottino001.labucaasd.R
@@ -17,18 +18,20 @@ class TimerBinderViewHolder(
     private val root: View
 ): FastAdapter.ViewHolder<TimerBinder>(root), IDrawerSwipeableViewHolder {
 
-    private val timer: PausableChronometerWithButtons = root.findViewById(R.id.timer)
-    private val nameLabel: TextView = root.findViewById(R.id.name_label)
-    private val hourlyCostLabel: TextView = root.findViewById(R.id.hourly_cost_label)
-    private val totalCostLabel: TextView = root.findViewById(R.id.total_cost_label)
+    val timer: PausableChronometerWithButtons = root.findViewById(R.id.timer)
+    val nameLabel: TextView = root.findViewById(R.id.name_label)
+    val hourlyCostLabel: TextView = root.findViewById(R.id.hourly_cost_label)
+    val totalCostLabel: TextView = root.findViewById(R.id.total_cost_label)
 
-    override val swipeableView: MaterialCardView = root.findViewById<MaterialCardView>(R.id.content).apply {
-        // prevents clicks going through the cardview and triggering the buttons
+    val transformationLayout: TransformationLayout = root.findViewById(R.id.item_transformation_layout)
+    private val contentCardView: MaterialCardView = root.findViewById<MaterialCardView>(R.id.content).apply {
         setOnClickListener {}
     }
 
-    private val deleteButton: ImageButton = root.findViewById(R.id.delete_button)
-    private val editButton: ImageButton = root.findViewById(R.id.edit_button)
+    override val swipeableView = transformationLayout
+
+    val deleteButton: ImageButton = root.findViewById(R.id.delete_button)
+    val editButton: ImageButton = root.findViewById(R.id.edit_button)
 
     private fun formatCostWithString(cost: Double, @StringRes stringResource: Int): String {
         return String.format(
@@ -106,7 +109,7 @@ class TimerBinderViewHolder(
         }
 
         editButton.setOnClickListener {
-            item.editCallback?.invoke(item)
+            item.editCallback?.invoke(item, this)
         }
     }
 

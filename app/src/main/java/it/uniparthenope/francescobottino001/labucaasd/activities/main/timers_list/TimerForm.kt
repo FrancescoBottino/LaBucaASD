@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputLayout
 import it.uniparthenope.francescobottino001.labucaasd.R
+import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 
 class TimerForm @JvmOverloads constructor(
     ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -64,7 +65,7 @@ class TimerForm @JvmOverloads constructor(
         );
     }
 
-    fun setUpLayout(formType: FORM_TYPE, positiveButtonCallback: (()->Unit)? = null, negativeButtonCallback: (()->Unit)? = null) {
+    fun setUpLayout(formType: FORM_TYPE, positiveButtonCallback: (()->Unit)? = null, negativeButtonCallback: (()->Unit)? = null, initValuesFrom: TimerData? = null) {
         title.apply {
             text = this.context.resources.getString(formType.titleString)
         }
@@ -83,6 +84,11 @@ class TimerForm @JvmOverloads constructor(
         if(formType.formVisible) {
             nameFieldLayout.visibility = View.VISIBLE
             hourlyCostFieldLayout.visibility = View.VISIBLE
+
+            initValuesFrom?.let {
+                nameField.setText(it.name)
+                hourlyCostField.setText(it.hourlyCost.toString())
+            }
         } else {
             nameFieldLayout.visibility = View.GONE
             hourlyCostFieldLayout.visibility = View.GONE

@@ -34,7 +34,7 @@ class TimerBinder(
         }
 
         fun ArrayList<TimerBinder>.withEditCallback(
-            callback: ((TimerBinder) -> Unit)?
+            callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?
         ): ArrayList<TimerBinder> {
             this.forEach {
                 it.editCallback = callback
@@ -67,8 +67,8 @@ class TimerBinder(
         return this
     }
 
-    var editCallback: ((TimerBinder) -> Unit)? = null
-    fun withEditCallback(callback: ((TimerBinder) -> Unit)?): TimerBinder {
+    var editCallback: ((TimerBinder, TimerBinderViewHolder) -> Unit)? = null
+    fun withEditCallback(callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?): TimerBinder {
         this.editCallback = callback
         return this
     }

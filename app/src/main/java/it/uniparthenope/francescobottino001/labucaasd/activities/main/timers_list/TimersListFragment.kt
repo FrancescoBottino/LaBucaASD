@@ -24,6 +24,8 @@ import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_lis
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditCallback
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditChronometerCallback
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withUpdateCallback
+import it.uniparthenope.francescobottino001.labucaasd.fadeIn
+import it.uniparthenope.francescobottino001.labucaasd.fadeOut
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 
@@ -158,7 +160,53 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         viewModel.updateTimer(timerData)
     }
 
-    private fun editTimer(item: TimerBinder) {
+    private fun editTimer(item: TimerBinder, vh: TimerBinderViewHolder) {
+        vh.transformationLayout.bindTargetView(timer_form)
+
+        timer_form.showFormCallback = {
+            overlay.fadeIn(
+                fab_to_new_timer_transformation_layout.duration
+            )
+            vh.deleteButton.fadeOut(
+                fab_to_new_timer_transformation_layout.duration
+            )
+            vh.editButton.fadeOut(
+                fab_to_new_timer_transformation_layout.duration
+            )
+            vh.transformationLayout.startTransform()
+        }
+        timer_form.dismissFormCallback = {
+            vh.transformationLayout.finishTransform()
+            overlay.fadeOut(
+                fab_to_new_timer_transformation_layout.duration
+            )
+            vh.deleteButton.fadeIn(
+                fab_to_new_timer_transformation_layout.duration
+            )
+            vh.editButton.fadeIn(
+                fab_to_new_timer_transformation_layout.duration
+            )
+        }
+
+        timer_form.setUpLayout(
+            TimerForm.FORM_TYPE.EDIT_TIMER, {
+                try {
+                    timer_form.getFormData { name, hourlyCost ->
+                        item.timerData.name = name
+                        item.timerData.hourlyCost = hourlyCost
+                        viewModel.updateTimer(item.timerData) { it ->
+                            adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
+                        }
+                    }
+                    timer_form.dismiss()
+                } catch (ignored: Exception) {}
+            }, {
+                timer_form.dismiss()
+            }, item.timerData
+        )
+
+        timer_form.show()
+        /*
         activity?.let { ctx ->
             EditTimerDialog(ctx, item.timerData) { name, hourlyCost ->
                 item.timerData.name = name
@@ -168,6 +216,8 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
                 }
             }.show()
         }
+
+         */
     }
 
     private fun deleteTimer(item: TimerBinder) {

@@ -5,45 +5,49 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/edit_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        android:background="@drawable/circle_background"
-        android:padding="4dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_round_edit_24"
-        android:tint="@color/edit_action"
-        app:layout_constraintBottom_toBottomOf="@+id/delete_button"
-        app:layout_constraintStart_toEndOf="@+id/delete_button"
-        app:layout_constraintTop_toTopOf="@+id/delete_button"
-        tools:ignore="ContentDescription" />
-
-    <ImageButton
-        android:id="@+id/delete_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="22dp"
-        android:background="@drawable/circle_background"
-        android:padding="4dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_round_delete_24"
-        android:tint="@color/delete_action"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <LinearLayout
+        android:layout_width="160dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/item_transformation_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintTop_toTopOf="@+id/item_transformation_layout">
 
-    <include
-        android:id="@+id/content"
-        layout="@layout/timers_list_item_content"
+        <ImageButton
+            android:id="@+id/delete_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/circle_background"
+            android:elevation="0dp"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_round_delete_24"
+            android:tint="@color/delete_action"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/edit_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:background="@drawable/circle_background"
+            android:elevation="0dp"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_round_edit_24"
+            android:tint="@color/edit_action"
+            android:translationZ="0dp"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
+
+    <com.skydoves.transformationlayout.TransformationLayout
+        android:id="@+id/item_transformation_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
         android:visibility="visible"
