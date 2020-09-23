@@ -35,7 +35,6 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: FastItemAdapter<TimerBinder>
-    private var isFormShowing: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,14 +69,12 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
         fab.setOnClickListener{
             timer_form.showFormCallback = {
-                isFormShowing = true
                 overlay.fadeIn(
                     fab_to_new_timer_transformation_layout.duration
                 )
                 fab_to_new_timer_transformation_layout.startTransform()
             }
             timer_form.dismissFormCallback = {
-                isFormShowing = false
                 fab_to_new_timer_transformation_layout.finishTransform()
                 overlay.fadeOut(
                     fab_to_new_timer_transformation_layout.duration
@@ -116,7 +113,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
     }
 
     override fun onBackPressed(): Boolean {
-        return if(isFormShowing) {
+        return if(timer_form.isShowing) {
             timer_form.dismiss()
             true
         } else false

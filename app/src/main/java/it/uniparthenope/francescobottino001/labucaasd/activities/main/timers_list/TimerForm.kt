@@ -110,14 +110,18 @@ class TimerForm @JvmOverloads constructor(
         else callback.invoke(name, cost)
     }
 
+    var isShowing = false
+
     var showFormCallback: (() -> Unit)? = null
     fun show() {
         showFormCallback?.invoke() ?: throw Exception()
+        isShowing = true
     }
 
     var dismissFormCallback: (() -> Unit)? = null
     fun dismiss() {
         dismissFormCallback?.invoke() ?: throw Exception()
+        isShowing = false
         nameField.text = null
         hourlyCostField.text = null
         nameFieldLayout.error = null
