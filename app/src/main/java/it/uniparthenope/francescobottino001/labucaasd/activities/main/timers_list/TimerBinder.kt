@@ -22,6 +22,8 @@ class TimerBinder(
             return bindersList
         }
 
+        //TODO create more efficient builder method
+
         fun ArrayList<TimerBinder>.withUpdateCallback(
             callback: ((TimerData) -> Unit)?
         ): ArrayList<TimerBinder> {

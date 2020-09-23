@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.drag.ItemTouchCallback
@@ -67,6 +68,8 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
         touchHelper.attachToRecyclerView(timers_list)
 
+        //TODO prevent edit and delete buttons from being clicked through the recyclerview item (see callback touch transmitter)
+
         fab.setOnClickListener{
             timer_form.showFormCallback = {
                 isFormShowing = true
@@ -119,6 +122,11 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
             timer_form.dismiss()
             true
         } else false
+    }
+
+    override fun itemTouchStartDrag(viewHolder: RecyclerView.ViewHolder) {
+        //TODO make viewholder return to position if it was swiped
+        super.itemTouchStartDrag(viewHolder)
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
