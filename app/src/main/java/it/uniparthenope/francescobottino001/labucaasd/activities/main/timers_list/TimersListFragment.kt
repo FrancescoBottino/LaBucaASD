@@ -181,6 +181,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         }
     }
 
+    //TODO transform form into new timer item in recyclerview
     private fun showNewTimerDialog() {
         form.currentTransformation = fab_transformation_layout
 
