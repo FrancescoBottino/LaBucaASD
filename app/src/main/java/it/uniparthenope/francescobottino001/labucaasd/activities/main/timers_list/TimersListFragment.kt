@@ -20,6 +20,11 @@ import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewMo
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 
+//TODO when deleting, update ordinals
+//TODO when edit, notify data changed only after animation AND room finished
+//TODO on new timer, transform form into timer item in recyclerview
+//TODO on timer stop trigger dialog for report saving (with preference on "don't ask anymore")
+
 class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
     companion object {
@@ -130,7 +135,6 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         }
     }
 
-    //TODO transform form into new timer item in recyclerview
     private fun showNewTimerDialog() {
         form.currentTransformation = fab_transformation_layout
 
