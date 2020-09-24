@@ -14,8 +14,6 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDrawerDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.itemanimators.AlphaInAnimator
-import com.skydoves.transformationlayout.TransformationLayout
-import com.skydoves.transformationlayout.onTransformationStartContainer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.labucaasd.*
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
@@ -36,47 +34,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         withSaveStateCallback(::saveTimerState)
         withEditChronometerCallback(::setTime)
     }
-
     private lateinit var form: FormView
-    inner class FormView(
-        val timerForm: TimerForm, val overlay: Overlay
-    ) {
-
-        var currentTransformation: TransformationLayout? = null
-        var isShowing: Boolean = false
-
-        init {
-            overlay.setOnClickListener {
-                hide()
-            }
-        }
-
-        fun show() {
-            currentTransformation?.let {
-                it.bindTargetView(timerForm)
-                it.startTransform()
-                overlay.fadeIn(it.duration)
-
-                isShowing = true
-            } ?: throw Exception()
-        }
-
-        fun hide() {
-            currentTransformation?.let {
-                it.finishTransform()
-                overlay.fadeOut(it.duration)
-                timerForm.cleanForm()
-
-                isShowing = false
-            } ?: throw Exception()
-            currentTransformation = null
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        onTransformationStartContainer()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
