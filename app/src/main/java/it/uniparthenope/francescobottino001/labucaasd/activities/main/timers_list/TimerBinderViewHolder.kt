@@ -2,6 +2,7 @@ package it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_li
 
 import android.view.View
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.StringRes
 import com.google.android.material.card.MaterialCardView
@@ -30,6 +31,7 @@ class TimerBinderViewHolder(
 
     override val swipeableView = transformationLayout
 
+    val drawer: LinearLayout = root.findViewById(R.id.drawer)
     val deleteButton: ImageButton = root.findViewById(R.id.delete_button)
     val editButton: ImageButton = root.findViewById(R.id.edit_button)
 
@@ -88,7 +90,7 @@ class TimerBinderViewHolder(
             item.timerData.elapsedSeconds = timer.timer.totalElapsedSeconds
             item.timerData.savedAt = Calendar.getInstance()
 
-            item.updateCallback?.invoke( item.timerData )
+            item.saveStateCallback?.invoke( item.timerData )
             updateCostText(item, timer.timer.totalElapsedSeconds)
         }
 
@@ -99,13 +101,13 @@ class TimerBinderViewHolder(
         timer.setOnLongClickListener {
             item.editChronometerCallback?.let {
                 it.invoke(item, timer.timer)
-                item.updateCallback?.invoke( item.timerData )
+                item.saveStateCallback?.invoke( item.timerData )
                 return@setOnLongClickListener true
             } ?: return@setOnLongClickListener false
         }
 
         deleteButton.setOnClickListener {
-            item.deleteCallback?.invoke(item)
+            item.deleteCallback?.invoke(item, this)
         }
 
         editButton.setOnClickListener {

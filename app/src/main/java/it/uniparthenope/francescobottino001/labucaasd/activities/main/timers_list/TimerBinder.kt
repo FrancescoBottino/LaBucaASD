@@ -24,11 +24,11 @@ class TimerBinder(
 
         //TODO create more efficient builder method
 
-        fun ArrayList<TimerBinder>.withUpdateCallback(
+        fun ArrayList<TimerBinder>.withSaveStateCallback(
             callback: ((TimerData) -> Unit)?
         ): ArrayList<TimerBinder> {
             this.forEach {
-                it.updateCallback = callback
+                it.saveStateCallback = callback
             }
             return this
         }
@@ -43,7 +43,7 @@ class TimerBinder(
         }
 
         fun ArrayList<TimerBinder>.withDeleteCallback(
-            callback: ((TimerBinder) -> Unit)?
+            callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?
         ): ArrayList<TimerBinder> {
             this.forEach {
                 it.deleteCallback = callback
@@ -61,9 +61,9 @@ class TimerBinder(
         }
     }
 
-    var updateCallback: ((TimerData) -> Unit)? = null
-    fun withUpdateCallback(callback: ((TimerData) -> Unit)?): TimerBinder {
-        this.updateCallback = callback
+    var saveStateCallback: ((TimerData) -> Unit)? = null
+    fun withSaveStateCallback(callback: ((TimerData) -> Unit)?): TimerBinder {
+        this.saveStateCallback = callback
         return this
     }
 
@@ -73,8 +73,8 @@ class TimerBinder(
         return this
     }
 
-    var deleteCallback: ((TimerBinder) -> Unit)? = null
-    fun withDeleteCallback(callback: ((TimerBinder) -> Unit)?): TimerBinder {
+    var deleteCallback: ((TimerBinder, TimerBinderViewHolder) -> Unit)? = null
+    fun withDeleteCallback(callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?): TimerBinder {
         this.deleteCallback = callback
         return this
     }

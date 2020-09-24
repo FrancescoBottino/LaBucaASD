@@ -11,9 +11,25 @@ fun View.fadeIn(animationDuration: Long): ViewPropertyAnimator {
     }
 }
 
+fun View.scaleIn(animationDuration: Long): ViewPropertyAnimator {
+    return animate().apply {
+        scaleX(1f)
+        scaleY(1f)
+        duration = animationDuration
+    }
+}
+
 fun View.fadeOut(animationDuration: Long): ViewPropertyAnimator {
     return animate().apply {
-        alpha(0.0f)
+        alpha(0f)
+        duration = animationDuration
+    }
+}
+
+fun View.scaleOut(animationDuration: Long): ViewPropertyAnimator {
+    return animate().apply {
+        scaleX(0f)
+        scaleY(0f)
         duration = animationDuration
     }
 }

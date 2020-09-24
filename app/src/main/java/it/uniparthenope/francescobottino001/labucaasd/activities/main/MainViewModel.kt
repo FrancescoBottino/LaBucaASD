@@ -14,12 +14,12 @@ class MainViewModel(private val app: Application): AndroidViewModel(app) {
         TimersDatabase.getDatabase(app)
     }
 
-    fun getListaTimer(callBack: (List<TimerData>) -> Unit) {
+    fun getListaTimer(onComplete: (List<TimerData>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val allTimers = db.timerDao().getAll()
 
             GlobalScope.launch(Dispatchers.Main) {
-                callBack.invoke(allTimers)
+                onComplete.invoke(allTimers)
             }
         }
     }
@@ -27,8 +27,8 @@ class MainViewModel(private val app: Application): AndroidViewModel(app) {
     fun addTimer(timer: TimerData, onComplete: ((TimerData)->Unit)? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             timer.id = db.timerDao().insert(timer).toInt()
-        }.invokeOnCompletion {
-            viewModelScope.launch(Dispatchers.Main) {
+
+            GlobalScope.launch(Dispatchers.Main) {
                 onComplete?.invoke(timer)
             }
         }
@@ -37,8 +37,8 @@ class MainViewModel(private val app: Application): AndroidViewModel(app) {
     fun updateTimer(timer: TimerData, onComplete: ((TimerData)->Unit)? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             db.timerDao().update(timer)
-        }.invokeOnCompletion {
-            viewModelScope.launch(Dispatchers.Main) {
+
+            GlobalScope.launch(Dispatchers.Main) {
                 onComplete?.invoke(timer)
             }
         }
@@ -47,8 +47,8 @@ class MainViewModel(private val app: Application): AndroidViewModel(app) {
     fun deleteTimer(timer: TimerData, onComplete: (()->Unit)? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             db.timerDao().delete(timer)
-        }.invokeOnCompletion {
-            viewModelScope.launch(Dispatchers.Main) {
+
+            GlobalScope.launch(Dispatchers.Main) {
                 onComplete?.invoke()
             }
         }

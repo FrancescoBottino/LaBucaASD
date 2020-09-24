@@ -23,7 +23,7 @@
         tools:listitem="@layout/timers_list_item" />
 
     <com.skydoves.transformationlayout.TransformationLayout
-        android:id="@+id/fab_to_new_timer_transformation_layout"
+        android:id="@+id/fab_transformation_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="14dp"
@@ -32,8 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:transformation_duration="550"
         app:transformation_fadeMode="cross"
-        android:translationZ="1dp"
-        app:transformation_targetView="@+id/timer_form">
+        android:translationZ="1dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"

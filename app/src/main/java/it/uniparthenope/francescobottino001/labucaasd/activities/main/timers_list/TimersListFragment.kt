@@ -14,18 +14,16 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDrawerDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.itemanimators.AlphaInAnimator
+import com.skydoves.transformationlayout.TransformationLayout
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
-import it.uniparthenope.francescobottino001.labucaasd.BaseFragment
-import it.uniparthenope.francescobottino001.labucaasd.R
+import it.uniparthenope.francescobottino001.labucaasd.*
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.toBinderArrayList
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withDeleteCallback
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditCallback
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditChronometerCallback
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withUpdateCallback
-import it.uniparthenope.francescobottino001.labucaasd.fadeIn
-import it.uniparthenope.francescobottino001.labucaasd.fadeOut
+import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withSaveStateCallback
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 
@@ -37,6 +35,42 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: FastItemAdapter<TimerBinder>
+
+    private lateinit var form: FormView
+    inner class FormView(
+        val timerForm: TimerForm, val overlay: Overlay
+    ) {
+
+        var currentTransformation: TransformationLayout? = null
+        var isShowing: Boolean = false
+
+        init {
+            overlay.setOnClickListener {
+                hide()
+            }
+        }
+
+        fun show() {
+            currentTransformation?.let {
+                it.bindTargetView(timerForm)
+                it.startTransform()
+                overlay.fadeIn(it.duration)
+
+                isShowing = true
+            } ?: throw Exception()
+        }
+
+        fun hide() {
+            currentTransformation?.let {
+                it.finishTransform()
+                overlay.fadeOut(it.duration)
+                timerForm.cleanForm()
+
+                isShowing = false
+            } ?: throw Exception()
+            currentTransformation = null
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,41 +96,15 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
             .withSensitivity(5f)
 
         val touchHelper = ItemTouchHelper(touchCallback)
-
         timers_list.layoutManager = LinearLayoutManager(root.context)
         timers_list.itemAnimator = AlphaInAnimator()
         timers_list.adapter = adapter
-
         touchHelper.attachToRecyclerView(timers_list)
 
-        fab.setOnClickListener{
-            timer_form.showFormCallback = {
-                overlay.fadeIn(
-                    fab_to_new_timer_transformation_layout.duration
-                )
-                fab_to_new_timer_transformation_layout.startTransform()
-            }
-            timer_form.dismissFormCallback = {
-                fab_to_new_timer_transformation_layout.finishTransform()
-                overlay.fadeOut(
-                    fab_to_new_timer_transformation_layout.duration
-                )
-            }
-            timer_form.setUpLayout(
-                TimerForm.FORM_TYPE.NEW_TIMER, {
-                    try {
-                        timer_form.getFormData(::newTimer)
-                        timer_form.dismiss()
-                    } catch (ignored: Exception) {}
-                }, {
-                    timer_form.dismiss()
-                }
-            )
-            timer_form.show()
-        }
+        form = FormView(timer_form, overlay)
 
-        overlay.setOnClickListener {
-            timer_form.dismiss()
+        fab.setOnClickListener{
+            showNewTimerDialog()
         }
     }
 
@@ -106,23 +114,22 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         viewModel.getListaTimer { timers ->
             adapter.set(
                 timers.toBinderArrayList()
-                    .withEditCallback(this::editTimer)
-                    .withDeleteCallback(this::deleteTimer)
-                    .withUpdateCallback(this::updateTimer)
+                    .withEditCallback(this::showEditTimerDialog)
+                    .withDeleteCallback(this::showDeleteTimerDialog)
+                    .withSaveStateCallback(this::saveTimerState)
                     .withEditChronometerCallback(this::setTime)
             )
         }
     }
 
     override fun onBackPressed(): Boolean {
-        return if(timer_form.isShowing) {
-            timer_form.dismiss()
+        return if(form.isShowing) {
+            form.hide()
             true
         } else false
     }
 
     override fun itemTouchStartDrag(viewHolder: RecyclerView.ViewHolder) {
-        //TODO make viewholder return to position if it was swiped
         super.itemTouchStartDrag(viewHolder)
     }
 
@@ -137,7 +144,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         adapter.adapterItems.forEach {
             val timer = it.timerData
             timer.ordinal = adapter.adapterItems.indexOf(it) + 1
-            updateTimer(timer)
+            saveTimerState(timer)
         }
     }
 
@@ -148,43 +155,63 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         viewModel.addTimer(newTimer) { it ->
             adapter.itemAdapter.add(
                 TimerBinder(it)
-                    .withEditCallback(this::editTimer)
-                    .withDeleteCallback(this::deleteTimer)
-                    .withUpdateCallback(this::updateTimer)
+                    .withEditCallback(this::showEditTimerDialog)
+                    .withDeleteCallback(this::showDeleteTimerDialog)
+                    .withSaveStateCallback(this::saveTimerState)
                     .withEditChronometerCallback(this::setTime)
             )
         }
     }
 
-    private fun updateTimer(timerData: TimerData) {
-        viewModel.updateTimer(timerData)
+    private fun saveTimerState(timerData: TimerData, callBack:((TimerData) -> Unit)? = null) {
+        viewModel.updateTimer(timerData, callBack)
     }
 
-    private fun editTimer(item: TimerBinder, vh: TimerBinderViewHolder) {
-        vh.transformationLayout.bindTargetView(timer_form)
-
-        timer_form.showFormCallback = {
-            overlay.fadeIn(
-                fab_to_new_timer_transformation_layout.duration
-            )
-            vh.deleteButton.fadeOut(
-                fab_to_new_timer_transformation_layout.duration
-            )
-            vh.editButton.fadeOut(
-                fab_to_new_timer_transformation_layout.duration
-            )
-            vh.transformationLayout.startTransform()
+    private fun editTimer(item: TimerBinder, callBack:((TimerData) -> Unit)? = null) {
+        viewModel.updateTimer(item.timerData) {
+            adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
+            callBack?.invoke(it)
         }
-        timer_form.dismissFormCallback = {
-            vh.transformationLayout.finishTransform()
-            overlay.fadeOut(
-                fab_to_new_timer_transformation_layout.duration
+    }
+
+    private fun deleteTimer(item: TimerBinder, callBack:(() -> Unit)? = null) {
+        viewModel.deleteTimer(item.timerData) {
+            adapter.remove(adapter.adapterItems.indexOf(item))
+            callBack?.invoke()
+        }
+    }
+
+    private fun showNewTimerDialog() {
+        form.currentTransformation = fab_transformation_layout
+
+        timer_form.setUpLayout(
+            TimerForm.FORM_TYPE.NEW_TIMER, {
+                try {
+                    timer_form.getFormData(::newTimer)
+                    form.hide()
+                } catch (ignored: Exception) {}
+            }, {
+                form.hide()
+            }
+        )
+
+        form.show()
+    }
+
+    private fun showEditTimerDialog(item: TimerBinder, vh: TimerBinderViewHolder) {
+        form.currentTransformation = vh.transformationLayout
+
+        fun FormView.showComposite() {
+            this.show()
+            vh.drawer.fadeOut(
+                vh.transformationLayout.duration
             )
-            vh.deleteButton.fadeIn(
-                fab_to_new_timer_transformation_layout.duration
-            )
-            vh.editButton.fadeIn(
-                fab_to_new_timer_transformation_layout.duration
+        }
+
+        fun FormView.hideComposite() {
+            this.hide()
+            vh.drawer.fadeIn(
+                vh.transformationLayout.duration
             )
         }
 
@@ -194,42 +221,59 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
                     timer_form.getFormData { name, hourlyCost ->
                         item.timerData.name = name
                         item.timerData.hourlyCost = hourlyCost
-                        viewModel.updateTimer(item.timerData) { it ->
-                            adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
-                        }
+                        editTimer(item)
                     }
-                    timer_form.dismiss()
+                    form.hideComposite()
                 } catch (ignored: Exception) {}
             }, {
-                timer_form.dismiss()
+                form.hideComposite()
             }, item.timerData
         )
 
-        timer_form.show()
-        /*
-        activity?.let { ctx ->
-            EditTimerDialog(ctx, item.timerData) { name, hourlyCost ->
-                item.timerData.name = name
-                item.timerData.hourlyCost = hourlyCost
-                viewModel.updateTimer(item.timerData) { it ->
-                    adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
-                }
-            }.show()
-        }
-
-         */
+        form.showComposite()
     }
 
-    private fun deleteTimer(item: TimerBinder) {
-        activity?.let { ctx ->
-            DeleteTimerDialog(ctx) {
-                viewModel.deleteTimer(item.timerData) {
-                    adapter.remove(adapter.adapterItems.indexOf(item))
-                }
-            }.show()
+    private fun showDeleteTimerDialog(item: TimerBinder, vh: TimerBinderViewHolder) {
+        form.currentTransformation = vh.transformationLayout
+
+        fun FormView.showComposite() {
+            this.show()
+            vh.drawer.fadeOut(
+                vh.transformationLayout.duration
+            )
         }
+
+        fun FormView.hideComposite() {
+            this.hide()
+            vh.drawer.fadeIn(
+                vh.transformationLayout.duration
+            )
+        }
+
+        timer_form.setUpLayout(
+            TimerForm.FORM_TYPE.DELETE_TIMER, {
+                vh.setIsRecyclable(false)
+
+                val speed = 120L
+                overlay.fadeOut(speed)
+                timer_form.scaleOut(speed)
+                    .withEndAction {
+                        timer_form.visibility = View.GONE
+                        timer_form.scaleX = 1f
+                        timer_form.scaleY = 1f
+                        timer_form.cleanForm()
+                    }
+
+                deleteTimer(item)
+            }, {
+                form.hideComposite()
+            }
+        )
+
+        form.showComposite()
     }
 
+    //TODO animation
     private fun setTime(item: TimerBinder, chronometer: PausableChronometer) {
         activity?.let { ctx ->
             val h = (chronometer.totalElapsedSeconds / 3600).toInt()
@@ -243,7 +287,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
                     state = PausableChronometer.State.IDLE
                 }
                 chronometer.setChronometerState(state, totalSeconds)
-                updateTimer(item.timerData)
+                saveTimerState(item.timerData)
             }, h, m, s, true).show()
         }
     }
