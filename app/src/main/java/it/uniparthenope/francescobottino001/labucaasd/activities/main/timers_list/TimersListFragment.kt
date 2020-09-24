@@ -19,11 +19,6 @@ import com.skydoves.transformationlayout.onTransformationStartContainer
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.labucaasd.*
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.toBinderArrayList
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withDeleteCallback
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditCallback
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withEditChronometerCallback
-import it.uniparthenope.francescobottino001.labucaasd.activities.main.timers_list.TimerBinder.Companion.withSaveStateCallback
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 
@@ -34,7 +29,13 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
     }
 
     private val viewModel: MainViewModel by viewModels()
-    private lateinit var adapter: FastItemAdapter<TimerBinder>
+    private val adapter: FastItemAdapter<TimerBinder> = FastItemAdapter()
+    private val timerBinderBuilder: TimerBinder.Builder = TimerBinder.Builder().apply {
+        withEditCallback(::showEditTimerDialog)
+        withDeleteCallback(::showDeleteTimerDialog)
+        withSaveStateCallback(::saveTimerState)
+        withEditChronometerCallback(::setTime)
+    }
 
     private lateinit var form: FormView
     inner class FormView(
@@ -85,8 +86,6 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = FastItemAdapter()
-
         val touchCallback = SimpleSwipeDrawerDragCallback(
             this,
             ItemTouchHelper.RIGHT)
@@ -113,11 +112,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
         viewModel.getListaTimer { timers ->
             adapter.set(
-                timers.toBinderArrayList()
-                    .withEditCallback(this::showEditTimerDialog)
-                    .withDeleteCallback(this::showDeleteTimerDialog)
-                    .withSaveStateCallback(this::saveTimerState)
-                    .withEditChronometerCallback(this::setTime)
+                timerBinderBuilder.build(timers)
             )
         }
     }
@@ -154,11 +149,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
         viewModel.addTimer(newTimer) { it ->
             adapter.itemAdapter.add(
-                TimerBinder(it)
-                    .withEditCallback(this::showEditTimerDialog)
-                    .withDeleteCallback(this::showDeleteTimerDialog)
-                    .withSaveStateCallback(this::saveTimerState)
-                    .withEditChronometerCallback(this::setTime)
+                timerBinderBuilder.build(it)
             )
         }
     }

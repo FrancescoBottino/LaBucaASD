@@ -7,56 +7,45 @@ import com.mikepenz.fastadapter.swipe.ISwipeable
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.labucaasd.R
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
-import java.util.*
 
-class TimerBinder(
+class TimerBinder private constructor(
     val timerData: TimerData
 ) : AbstractItem<TimerBinderViewHolder>(), ISwipeable, IDraggable {
 
-    companion object {
-        fun List<TimerData>.toBinderArrayList(): ArrayList<TimerBinder> {
-            val bindersList: ArrayList<TimerBinder> = arrayListOf()
-            this.forEach {
-                bindersList.add(TimerBinder(it))
-            }
-            return bindersList
+    class Builder {
+        fun build(timerData: TimerData): TimerBinder {
+            return TimerBinder(timerData)
+                .withEditCallback(editCallback)
+                .withSaveStateCallback(saveStateCallback)
+                .withDeleteCallback(deleteCallback)
+                .withEditChronometerCallback(editChronometerCallback)
         }
 
-        //TODO create more efficient builder method
+        fun build(timerDataList: List<TimerData>): List<TimerBinder> {
+            return timerDataList.map { build(it) }
+        }
 
-        fun ArrayList<TimerBinder>.withSaveStateCallback(
-            callback: ((TimerData) -> Unit)?
-        ): ArrayList<TimerBinder> {
-            this.forEach {
-                it.saveStateCallback = callback
-            }
+        var saveStateCallback: ((TimerData) -> Unit)? = null
+        fun withSaveStateCallback(callback: ((TimerData) -> Unit)?): Builder {
+            this.saveStateCallback = callback
             return this
         }
 
-        fun ArrayList<TimerBinder>.withEditCallback(
-            callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?
-        ): ArrayList<TimerBinder> {
-            this.forEach {
-                it.editCallback = callback
-            }
+        var editCallback: ((TimerBinder, TimerBinderViewHolder) -> Unit)? = null
+        fun withEditCallback(callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?): Builder {
+            this.editCallback = callback
             return this
         }
 
-        fun ArrayList<TimerBinder>.withDeleteCallback(
-            callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?
-        ): ArrayList<TimerBinder> {
-            this.forEach {
-                it.deleteCallback = callback
-            }
+        var deleteCallback: ((TimerBinder, TimerBinderViewHolder) -> Unit)? = null
+        fun withDeleteCallback(callback: ((TimerBinder, TimerBinderViewHolder) -> Unit)?): Builder {
+            this.deleteCallback = callback
             return this
         }
 
-        fun ArrayList<TimerBinder>.withEditChronometerCallback(
-            callback: ((TimerBinder, PausableChronometer) -> Unit)?
-        ): ArrayList<TimerBinder> {
-            this.forEach {
-                it.editChronometerCallback = callback
-            }
+        var editChronometerCallback: ((TimerBinder, PausableChronometer) -> Unit)? = null
+        fun withEditChronometerCallback(callback: ((TimerBinder, PausableChronometer) -> Unit)?): Builder {
+            this.editChronometerCallback = callback
             return this
         }
     }
