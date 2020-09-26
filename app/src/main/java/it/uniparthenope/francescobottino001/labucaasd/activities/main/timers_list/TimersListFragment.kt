@@ -20,7 +20,6 @@ import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewMo
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 
-//TODO when deleting, update ordinals
 //TODO when edit, notify data changed only after animation AND room finished
 //TODO on new timer, transform form into timer item in recyclerview
 //TODO on timer stop trigger dialog for report saving (with preference on "don't ask anymore")
@@ -98,7 +97,10 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
     override fun itemTouchDropped(oldPosition: Int, newPosition: Int) {
         super.itemTouchDropped(oldPosition, newPosition)
+        updateItemsPositions()
+    }
 
+    private fun updateItemsPositions() {
         adapter.adapterItems.forEach {
             val timer = it.timerData
             timer.ordinal = adapter.adapterItems.indexOf(it) + 1
@@ -131,6 +133,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
     private fun deleteTimer(item: TimerBinder, callBack:(() -> Unit)? = null) {
         viewModel.deleteTimer(item.timerData) {
             adapter.remove(adapter.adapterItems.indexOf(item))
+            updateItemsPositions()
             callBack?.invoke()
         }
     }
