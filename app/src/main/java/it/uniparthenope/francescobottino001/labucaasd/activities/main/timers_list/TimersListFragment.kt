@@ -14,6 +14,7 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDrawerDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.itemanimators.AlphaInAnimator
+import com.skydoves.transformationlayout.OnTransformFinishListener
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
 import it.uniparthenope.francescobottino001.labucaasd.*
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
@@ -36,7 +37,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
     private val timerBinderBuilder: TimerBinder.Builder = TimerBinder.Builder().apply {
         withEditCallback(::showEditTimerDialog)
         withDeleteCallback(::showDeleteTimerDialog)
-        withSaveStateCallback(::saveTimerState)
+        withSaveStateCallback(::updateTimerState)
         withEditChronometerCallback(::setTime)
     }
     private lateinit var form: FormView
@@ -105,7 +106,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         adapter.adapterItems.forEach {
             val timer = it.timerData
             timer.ordinal = adapter.adapterItems.indexOf(it) + 1
-            saveTimerState(timer)
+            updateTimerState(timer)
         }
     }
 
@@ -120,18 +121,18 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         }
     }
 
-    private fun saveTimerState(timerData: TimerData, callBack:((TimerData) -> Unit)? = null) {
+    private fun updateTimerState(timerData: TimerData, callBack:((TimerData) -> Unit)? = null) {
         viewModel.updateTimer(timerData, callBack)
     }
 
-    private fun editTimer(item: TimerBinder, callBack:((TimerData) -> Unit)? = null) {
+    private fun updateTimerStateAndNotifyAdapter(item: TimerBinder, callBack:((TimerData) -> Unit)? = null) {
         viewModel.updateTimer(item.timerData) {
             adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
             callBack?.invoke(it)
         }
     }
 
-    private fun deleteTimer(item: TimerBinder, callBack:(() -> Unit)? = null) {
+    private fun deleteTimerAndNotifyAdapter(item: TimerBinder, callBack:(() -> Unit)? = null) {
         viewModel.deleteTimer(item.timerData) {
             adapter.remove(adapter.adapterItems.indexOf(item))
             updateItemsPositions()
@@ -158,6 +159,11 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
     private fun showEditTimerDialog(item: TimerBinder, vh: TimerBinderViewHolder) {
         form.currentTransformation = vh.transformationLayout
+        form.currentTransformation?.onTransformFinishListener = object : OnTransformFinishListener {
+            override fun onFinish(isTransformed: Boolean) {
+                adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
+            }
+        }
 
         fun FormView.showComposite() {
             this.show()
@@ -179,9 +185,10 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
                     timer_form.getFormData { name, hourlyCost ->
                         item.timerData.name = name
                         item.timerData.hourlyCost = hourlyCost
-                        editTimer(item)
+                        updateTimerStateAndNotifyAdapter(item) {
+                            form.hideComposite()
+                        }
                     }
-                    form.hideComposite()
                 } catch (ignored: Exception) {}
             }, {
                 form.hideComposite()
@@ -222,7 +229,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
                         timer_form.cleanForm()
                     }
 
-                deleteTimer(item)
+                deleteTimerAndNotifyAdapter(item)
             }, {
                 form.hideComposite()
             }
@@ -245,7 +252,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
                     state = PausableChronometer.State.IDLE
                 }
                 chronometer.setChronometerState(state, totalSeconds)
-                saveTimerState(item.timerData)
+                updateTimerState(item.timerData)
             }, h, m, s, true).show()
         }
     }
