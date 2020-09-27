@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.timers_list_fragment.*
 //TODO when edit, notify data changed only after animation AND room finished
 //TODO on new timer, transform form into timer item in recyclerview
 //TODO on timer stop trigger dialog for report saving (with preference on "don't ask anymore")
-//TODO make form card clickable to consume click event and prevent overlay being clicked through the form
 
 class TimersListFragment: BaseFragment(), ItemTouchCallback {
 
@@ -64,6 +63,7 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         timers_list.adapter = adapter
         touchHelper.attachToRecyclerView(timers_list)
 
+        timer_form.setOnClickListener {}
         form = FormView(timer_form, overlay)
 
         fab.setOnClickListener{
