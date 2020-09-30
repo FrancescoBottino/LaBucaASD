@@ -16,12 +16,13 @@ import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.itemanimators.AlphaInAnimator
 import com.skydoves.transformationlayout.OnTransformFinishListener
 import it.uniparthenope.francescobottino001.chronometers_extensions.PausableChronometer
-import it.uniparthenope.francescobottino001.labucaasd.*
+import it.uniparthenope.francescobottino001.labucaasd.BaseFragment
+import it.uniparthenope.francescobottino001.labucaasd.R
 import it.uniparthenope.francescobottino001.labucaasd.activities.main.MainViewModel
 import it.uniparthenope.francescobottino001.labucaasd.persistence.TimerData
+import it.uniparthenope.francescobottino001.labucaasd.scaleOut
 import kotlinx.android.synthetic.main.timers_list_fragment.*
 
-//TODO when edit, notify data changed only after animation AND room finished
 //TODO on new timer, transform form into timer item in recyclerview
 //TODO on timer stop trigger dialog for report saving (with preference on "don't ask anymore")
 
@@ -161,22 +162,9 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
         form.currentTransformation = vh.transformationLayout
         form.currentTransformation?.onTransformFinishListener = object : OnTransformFinishListener {
             override fun onFinish(isTransformed: Boolean) {
-                adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
+                if(!isTransformed)
+                    adapter.notifyItemChanged(adapter.adapterItems.indexOf(item))
             }
-        }
-
-        fun FormView.showComposite() {
-            this.show()
-            vh.drawer.fadeOut(
-                vh.transformationLayout.duration
-            )
-        }
-
-        fun FormView.hideComposite() {
-            this.hide()
-            vh.drawer.fadeIn(
-                vh.transformationLayout.duration
-            )
         }
 
         timer_form.setUpLayout(
@@ -185,57 +173,43 @@ class TimersListFragment: BaseFragment(), ItemTouchCallback {
                     timer_form.getFormData { name, hourlyCost ->
                         item.timerData.name = name
                         item.timerData.hourlyCost = hourlyCost
-                        updateTimerStateAndNotifyAdapter(item) {
-                            form.hideComposite()
+                        updateTimerState(item.timerData) {
+                            form.hide()
                         }
                     }
                 } catch (ignored: Exception) {}
             }, {
-                form.hideComposite()
+                form.hide()
             }, item.timerData
         )
 
-        form.showComposite()
+        form.show()
     }
 
     private fun showDeleteTimerDialog(item: TimerBinder, vh: TimerBinderViewHolder) {
         form.currentTransformation = vh.transformationLayout
 
-        fun FormView.showComposite() {
-            this.show()
-            vh.drawer.fadeOut(
-                vh.transformationLayout.duration
-            )
-        }
-
-        fun FormView.hideComposite() {
-            this.hide()
-            vh.drawer.fadeIn(
-                vh.transformationLayout.duration
-            )
-        }
-
         timer_form.setUpLayout(
             TimerForm.FORM_TYPE.DELETE_TIMER, {
-                vh.setIsRecyclable(false)
+                deleteTimerAndNotifyAdapter(item) {
+                    vh.setIsRecyclable(false)
 
-                val speed = 120L
-                overlay.fadeOut(speed)
-                timer_form.scaleOut(speed)
-                    .withEndAction {
-                        timer_form.visibility = View.GONE
-                        timer_form.scaleX = 1f
-                        timer_form.scaleY = 1f
-                        timer_form.cleanForm()
-                    }
-
-                deleteTimerAndNotifyAdapter(item)
+                    val speed = 120L
+                    overlay.fadeOut(speed)
+                    timer_form.scaleOut(speed)
+                        .withEndAction {
+                            timer_form.visibility = View.GONE
+                            timer_form.scaleX = 1f
+                            timer_form.scaleY = 1f
+                            timer_form.cleanForm()
+                        }
+                }
             }, {
-                form.hideComposite()
+                form.hide()
             }
         )
 
-        form.showComposite()
+        form.show()
     }
 
     //TODO animation
